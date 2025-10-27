@@ -82,6 +82,3 @@ Pentru a compensa avantajul jucătorului cu negru (care începe primul), jucăto
 - [Learn to Play Go – online-go.com](https://online-go.com/learn-to-play-go)  
 - [Sensei’s Library – Enciclopedia Go](https://senseis.xmp.net)
 
----
-
-> ✨ *Acest proiect C++ are scop educativ și recreativ – o implementare minimalistă, dar completă, a unuia dintre cele mai vechi și mai profunde jocuri de strategie din lume.*
