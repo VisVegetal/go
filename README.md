@@ -1,4 +1,4 @@
-# Go – Joc de strategie japonez în C++
+# Go
 
 Un joc clasic de strategie japonez, implementat în **C++**.  
 Obiectivul jocului este de a **delimita cu piesele proprii un număr cât mai mare de puncte**.  
