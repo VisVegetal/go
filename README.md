@@ -1,27 +1,35 @@
-### Go 
+# Go – Joc de strategie japonez în C++
 
--Un joc clasic de strategie japonez implementat în C++.  
--Pe scurt, obiectivul jocului este de a delimita cu piesele proprii un număr cât mai mare de puncte. Regulile de joc sunt -foarte simple și pot fi învățate cu ușurință. Totuși este un joc complex, comparabil în această privință numai cu șahul.
+Un joc clasic de strategie japonez, implementat în **C++**.  
+Obiectivul jocului este de a **delimita cu piesele proprii un număr cât mai mare de puncte**.  
+
+Deși regulile sunt simple și pot fi învățate rapid, **Go** este un joc profund strategic — comparabil ca profunzime doar cu **șahul**.
+
 ---
 
 ## Caracteristici
 
-- **Reguli complete** – implementare a logicii oficiale de Go (capturi, libertăți, teritorii).
-# Regulile de bază ale jocului Go
-
-Go este un joc de strategie pentru doi jucători, originar din Asia, jucat pe o tablă numită **goban**.
+- **Reguli complete** – implementare fidelă a logicii oficiale Go (capturi, libertăți, teritorii)
+- **Tablă personalizabilă** – dimensiuni standard 19×19, dar și 13×13 sau 9×9 pentru partide scurte
+- **Detecție automată a capturilor**
+- **Calcul corect al scorului final (territoriu + capturi + komi)**
+- **Suport pentru pasare și încheiere de partidă**
 
 ---
 
 ## Scopul jocului
-Câștigă jucătorul care controlează cea mai mare parte a tablei — adică are cele mai multe **puncte de teritoriu** + **pietre capturate**.
+
+Câștigă jucătorul care controlează cea mai mare parte a tablei — adică are cele mai multe:
+- **puncte de teritoriu**
+- **pietre capturate**
 
 ---
 
-## Componente
-- Tabla are 19×19 linii (sau 13×13 / 9×9 pentru jocuri scurte)
-- Două seturi de piese:
-  - **Negre (Black)** – încep primele
+## Componentele jocului
+
+- **Tabla (Goban)** – grilă de 19×19 intersecții (sau variante mai mici)
+- **Două seturi de piese:**
+  - **Negre (Black)** – încep primele  
   - **Albe (White)** – joacă după
 
 ---
@@ -29,45 +37,51 @@ Câștigă jucătorul care controlează cea mai mare parte a tablei — adică a
 ## Regulile de bază
 
 1. **Mutarea**
-   - Jucătorii pun pe rând câte o piatră pe o intersecție goală.
-   - O piatră nu se mai mută, dar poate fi capturată.
+   - Jucătorii plasează alternativ câte o piatră pe o intersecție goală.  
+   - Pietrele nu se mută, dar pot fi capturate.
 
 2. **Libertăți**
-   - Fiecare piatră are „libertăți” = intersecțiile libere adiacente (sus, jos, stânga, dreapta).
+   - Fiecare piatră are *libertăți* = intersecțiile libere adiacente (sus, jos, stânga, dreapta).  
    - Dacă toate libertățile sunt ocupate de adversar → piatra este **capturată** și scoasă de pe tablă.
 
 3. **Grupuri**
-   - Pietrele conectate pe linii directe formează un **grup** și își împart libertățile.
+   - Pietrele adiacente formează un **grup** și își împart libertățile.  
    - Grupurile pot fi capturate doar dacă toate libertățile lor sunt eliminate.
 
-4. **Ko (interdicția de repetiție)**
-   - Nu ai voie să faci o mutare care reface exact aceeași poziție anterioară.
+4. **Regula Ko (interdicția de repetiție)**
+   - Nu este permisă o mutare care recreează exact aceeași poziție anterioară.
 
 5. **Pasarea**
-   - Un jucător poate **pasa** dacă nu mai are mutări avantajoase.
-   - Când ambii pasează consecutiv → jocul se termină.
+   - Un jucător poate **pasa** dacă nu mai are mutări utile.  
+   - Când ambii jucători pasează consecutiv → jocul se termină.
 
 6. **Punctajul**
    - La final, fiecare jucător numără:
-     - Numărul de **intersecții controlate**
+     - Numărul de **intersecții controlate** (teritoriu)
      - + **Pietrele capturate**
    - Jucătorul cu cel mai mare total câștigă.
 
 ---
 
-## Regula Komi
-Pentru a echilibra avantajul jucătorului cu negru (care începe primul), jucătorul cu alb primește **komi** — de obicei **6.5 puncte** adiționale.
+## Regula *Komi*
+
+Pentru a compensa avantajul jucătorului cu negru (care începe primul), jucătorul cu alb primește **komi** – de obicei **6.5 puncte** adiționale.
 
 ---
 
-##  Sfaturi rapide
-- Încearcă să controlezi colțurile și marginile mai întâi.
-- Evită luptele inutile dacă poți câștiga teritoriu sigur.
-- Fiecare piatră ar trebui să aibă un scop (protecție, extindere, atac).
+## Sfaturi rapide
+
+- Controlează **colțurile** și **marginile** înaintea centrului.  
+- Evită luptele inutile dacă poți obține teritoriu sigur.  
+- Fiecare piatră trebuie să contribuie la o strategie (protecție, expansiune, atac).
 
 ---
 
-**Resurse utile:**
-- [https://online-go.com/learn-to-play-go](https://online-go.com/learn-to-play-go)
-- [https://senseis.xmp.net](https://senseis.xmp.net)
+## Resurse utile
 
+- [Learn to Play Go – online-go.com](https://online-go.com/learn-to-play-go)  
+- [Sensei’s Library – Enciclopedia Go](https://senseis.xmp.net)
+
+---
+
+> ✨ *Acest proiect C++ are scop educativ și recreativ – o implementare minimalistă, dar completă, a unuia dintre cele mai vechi și mai profunde jocuri de strategie din lume.*
