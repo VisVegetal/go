@@ -1,7 +1,7 @@
 ### Go 
 
 -Un joc clasic de strategie japonez implementat în C++.  
-Pe scurt, obiectivul jocului este de a delimita cu piesele proprii un număr cât mai mare de puncte. Regulile de joc sunt foarte simple și pot fi învățate cu ușurință. Totuși este un joc complex, comparabil în această privință numai cu șahul.
+-Pe scurt, obiectivul jocului este de a delimita cu piesele proprii un număr cât mai mare de puncte. Regulile de joc sunt -foarte simple și pot fi învățate cu ușurință. Totuși este un joc complex, comparabil în această privință numai cu șahul.
 ---
 
 ## Caracteristici
