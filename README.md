@@ -1,6 +1,6 @@
 # 🀄 Go Game
 
-Un joc clasic de strategie japonez implementat în Python.  
+Un joc clasic de strategie japonez implementat în C++.  
 Scopul este capturarea teritoriului prin plasarea de pietre negre și albe pe o tablă de 19x19 (sau alte dimensiuni), respectând regulile tradiționale ale jocului Go.
 
 ---
