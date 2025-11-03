@@ -10,7 +10,7 @@ runs:
       id: cache-cppcheck
       with:
         path: cppcheck
-        key: cppcheck-${{ env.CPPCHECK_VER }}
+        key: cppcheck-${{ env.CPPCHECK_VER }}-v1
 
     - name: Build cppcheck
       shell: bash
@@ -24,7 +24,7 @@ runs:
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
       with:
         path: cppcheck
-        key: cppcheck-${{ env.CPPCHECK_VER }}
+        key: cppcheck-${{ env.CPPCHECK_VER }}-v1
 
     - name: Install cppcheck
       shell: bash
