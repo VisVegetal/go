@@ -12,11 +12,14 @@ runs:
         path: cppcheck
         key: cppcheck-${{ env.CPPCHECK_VER }}-v1
 
-    - name: Build cppcheck
+    - name: Build and Install cppcheck
       shell: bash
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
       run: |
         bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
+        # Adaugă instalarea aici, forțând-o să ruleze DOAR la cache miss
+        cd cppcheck
+        sudo cmake --install build
 
     - name: Save cppcheck cache
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
