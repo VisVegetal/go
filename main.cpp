@@ -161,7 +161,6 @@ private:
     std::string nume;
     unsigned int pietreCapturate;
     Culoare piatra_curenta;
-    tipJ tip_jucator;
 public:
     explicit Jucator(std::string nume_, unsigned int pietreCapturate_, Culoare piatra_curenta_, tipJ tip_jucator_)
         : nume(nume_), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
