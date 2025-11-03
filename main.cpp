@@ -392,7 +392,7 @@ Joc::Joc(Dimensiuni dim,
          float komi, bool permiteSuicid, bool regulaKo)
     : tabla(dim),
       jucatorNegru(numeN, 0, culoareN, tipN),
-      jucatorAlb(numeA, 0, culoareA, tipN),
+      jucatorAlb(numeA, 0, culoareA, tipA),
       reguli(permiteSuicid, regulaKo, false, komi, dim, 0),
       jucatorCurent(Culoare::Negru),
       mutariEfectuate(0)
