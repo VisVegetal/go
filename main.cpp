@@ -617,7 +617,7 @@ void TestareJoc(std::istream& is) {
 }
 
 int main() {
-    std::ifstream input_file("tastatura.txt");
+    std::ifstream input_file("input.txt");
     if (!input_file.is_open()) {
         std::cerr << "Eroare: Nu s-a putut deschide input.txt\n";
         return 1;
