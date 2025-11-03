@@ -12,17 +12,11 @@ runs:
         path: cppcheck
         key: cppcheck-${{ env.CPPCHECK_VER }}
 
-   - name: Build cppcheck
-
+    - name: Build cppcheck
       shell: bash
-
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
-
       run: |
-
         bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
-
-
 
     - name: Save cppcheck cache
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
