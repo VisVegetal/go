@@ -176,6 +176,8 @@ public:
 
     std::string getNume() const { return nume; }
 
+    tipJ getTipJucator() const { return tip_jucator; }
+
     friend class Joc;
 };
 
