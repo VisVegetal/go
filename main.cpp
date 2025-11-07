@@ -543,8 +543,8 @@ bool Joc::AplicaMutare(const Mutare& m) {
 
 //calculare scor final: pietre capturate + teritoriu + komi
 void Joc::CalculeazaScorFinal() const {
-        auto scorNegru = (float) jucatorNegru.pietreCapturate;
-        float scorAlb = (float) jucatorAlb.pietreCapturate + reguli.komi;
+        auto scorNegru = static_cast<float>(jucatorNegru.pietreCapturate);
+        float scorAlb = static_cast<float>(jucatorAlb.pietreCapturate) + reguli.komi;
 
         float teritoriuNegru = 0.0f;
         float teritoriuAlb = 0.0f;
@@ -594,16 +594,15 @@ void TestareJoc(std::istream& is) {
             // ...
         } else if (mutare_tip_str == "PLASEAZA") {
             if (!(is >> x >> y)) break;
-            m = Mutare({(unsigned int)x, (unsigned int)y}, tipM::plasare);
+            m = Mutare({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}, tipM::plasare);
         } else {
             continue;
         }
 
         std::cout << "Jucator " << (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume()) << " muta: " << m << "\n";
 
-        if (!jocGo.reguli.esteSfarsitJoc()) {
-            jocGo.AplicaMutare(m);
-        }
+        jocGo.AplicaMutare(m);
+        
 
         jocGo.AfiseazaStareaJocului();
 
