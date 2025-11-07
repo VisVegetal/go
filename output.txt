@@ -1,0 +1,293 @@
+===== INITIERE JOC =====
+========== STAREA JOCULUI (Negru la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # # # # # # # # # 
+2 # # # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # # # # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 0
+=================================================================
+
+===== SIMULARE MUTARI (AplicaMutare) =====
+Jucator Mario muta: Mutare la (1, 1)
+========== STAREA JOCULUI (Alb la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N # # # # # # # 
+2 # # # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # # # # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 1
+=================================================================
+Jucator Luigi muta: Mutare la (7, 7)
+========== STAREA JOCULUI (Negru la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N # # # # # # # 
+2 # # # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # # A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 2
+=================================================================
+Jucator Mario muta: Mutare la (1, 2)
+========== STAREA JOCULUI (Alb la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # # # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # # A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 3
+=================================================================
+Jucator Luigi muta: Mutare la (7, 6)
+========== STAREA JOCULUI (Negru la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # # # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # A A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 4
+=================================================================
+Jucator Mario muta: Mutare la (2, 1)
+========== STAREA JOCULUI (Alb la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # N # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # # # 
+7 # # # # # # A A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 5
+=================================================================
+Jucator Luigi muta: Mutare la (6, 7)
+========== STAREA JOCULUI (Negru la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # N # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # A # 
+7 # # # # # # A A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 0
+Mutari Efectuate: 6
+=================================================================
+Jucator Mario muta: Mutare: Pass
+Mario a pasat.
+========== STAREA JOCULUI (Alb la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # N # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # A # 
+7 # # # # # # A A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: NU
+  Pass-uri Consec.: 1
+Mutari Efectuate: 6
+=================================================================
+Jucator Luigi muta: Mutare: Pass
+Luigi a pasat.
+Jocul s-a încheiat prin 2 Pass-uri consecutive!
+========== STAREA JOCULUI (Negru la mutare) ==========
+--- Tabla de GO (9x9) ---
+  0 1 2 3 4 5 6 7 8 
+0 # # # # # # # # # 
+1 # N N # # # # # # 
+2 # N # # # # # # # 
+3 # # # # # # # # # 
+4 # # # # # # # # # 
+5 # # # # # # # # # 
+6 # # # # # # # A # 
+7 # # # # # # A A # 
+8 # # # # # # # # # 
+---------------------------
+--- Jucator Mario---
+Tip: Uman
+Culoare: Negru
+Pietre capturate: 0
+--- Jucator Luigi---
+Tip: Uman
+Culoare: Alb
+Pietre capturate: 0
+--- Regulile Jocului ---
+  Dimensiune Tabla: 9x9
+  Komi: 6.5
+  Permite Suicid: NU
+  Regula Ko: ON
+  Sfarsit Joc: DA
+  Pass-uri Consec.: 2
+Mutari Efectuate: 6
+=================================================================
+
+============== CALCUL SCOR FINAL =============
+Capturi Negru: 0 (+ Teritoriu: 0)
+Capturi Alb: 0 (+ Komi: 6.5 + Teritoriu: 0)
+
+** SCOR FINAL NEGRU: 0 **
+** SCOR FINAL ALB: 6.5 **
+CÂȘTIGĂ JUCĂTORUL ALB!
+==============================================
