@@ -5,8 +5,8 @@
 #include <set>
 #include <iostream>
 #include <algorithm>
-#include <sstream>
 #include <tuple>
+#include <sstream>
 
 //declarare pentru vizibilitate in clasele joc si reguli
 void TestareJoc(std::istream& is);
