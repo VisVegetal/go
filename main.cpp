@@ -1,12 +1,11 @@
-#include <vector>
 #include <utility>
+#include <vector>
 #include <string>
 #include <fstream>
 #include <set>
 #include <iostream>
-#include <algorithm>
 #include <tuple>
-#include <sstream>
+#include <algorithm>
 
 //declarare pentru vizibilitate in clasele joc si reguli
 void TestareJoc(std::istream& is);
@@ -26,6 +25,7 @@ struct Pozitie {
         return x == other.x && y == other.y;
     }
 };
+
 
 //afisarea pozitiei (x,y)
 std::ostream& operator<<(std::ostream& os, const Pozitie& p) {
@@ -65,22 +65,29 @@ std::ostream& operator<<(std::ostream& os, const Pietre& p) {
     return os;
 }
 
-
+[[nodiscard]] unsigned int CalculeazaMarimeTabla(Dimensiuni dim) {
+    if (dim == Dimensiuni::D9x9) return 9;
+    if (dim == Dimensiuni::D13x13) return 13;
+    return 19;
+}
 //clasa pentru tabla
 class Tabla {
 private:
-    Dimensiuni dimensiune;
+    unsigned int marimeTabla;
     std::vector<std::vector<Culoare>> tabla;
-    unsigned int getMarime() const {
-        if (dimensiune == Dimensiuni::D9x9) return 9;
-        if (dimensiune == Dimensiuni::D13x13) return 13;
-        return 19;
-    }
+
 public:
     explicit Tabla(Dimensiuni dimensiune_)
-        : dimensiune(dimensiune_){
-        unsigned int n = getMarime();
-        tabla.resize(n, std::vector< Culoare>(n, Culoare::Gol));
+        : marimeTabla(CalculeazaMarimeTabla(dimensiune_)), // Inițializare CORECTĂ, fără warning!
+          tabla(marimeTabla, std::vector<Culoare>(marimeTabla, Culoare::Gol))
+    {}
+
+    [[nodiscard]] const std::vector<std::vector<Culoare>>& getStareTabla() const {
+        return tabla;
+    }
+
+    [[nodiscard]] unsigned int getMarime() const {
+        return marimeTabla;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Tabla& t);
@@ -91,10 +98,10 @@ public:
 
     void Plaseazapiatra (const Pozitie& p, Culoare c);
     void ScoatePiatra (const Pozitie& p);
-    bool esteGol(const Pozitie& p) const;
 
-    //cititor de stare (grupuri, libertati)
-    Culoare getPozitieCuloare(const Pozitie& p) const {
+    [[nodiscard]]bool esteGol(const Pozitie& p) const;
+
+    [[nodiscard]]Culoare getPozitieCuloare(const Pozitie& p) const {
         unsigned int n = getMarime();
         if (p.x < n && p.y < n)
             return tabla[p.x][p.y];
@@ -164,7 +171,7 @@ private:
     tipJ tip_jucator;
 public:
     explicit Jucator(std::string nume_, unsigned int pietreCapturate_, Culoare piatra_curenta_, tipJ tip_jucator_)
-        : nume(nume_), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
+        : nume(std::move(nume_)), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
 
     Jucator(const Jucator& other) = default;
     Jucator& operator=(const Jucator& other) = default;
@@ -174,9 +181,9 @@ public:
 
     void AdaugaPietreCapturate(unsigned int nr);
 
-    std::string getNume() const { return nume; }
+    [[nodiscard]]std::string getNume() const { return nume; }
 
-    tipJ getTipJucator() const { return tip_jucator; }
+    [[nodiscard]]tipJ getTipJucator() const { return tip_jucator; }
 
     friend class Joc;
 };
@@ -218,9 +225,9 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Mutare& m);
 
-    bool isPass() const;
+    [[nodiscard]]bool isPass() const;
 
-    Pozitie getPozitie() const {
+    [[nodiscard]]Pozitie getPozitie() const {
         return pozitie;
     }
 };
@@ -249,7 +256,7 @@ private:
     int id;
     public:
         explicit Grup(std::vector<Pozitie> pozitiiPietre_, std::set<Pozitie> libertati_, bool capturat_, Culoare culoare_, int id_)
-            : pozitiiPietre(pozitiiPietre_), libertati(libertati_), capturat(capturat_), culoare(culoare_), id(id_){}
+            : pozitiiPietre(std::move(pozitiiPietre_)), libertati(std::move(libertati_)), capturat(capturat_), culoare(culoare_), id(id_){}
 
     Grup(const Grup& other) = default;
     Grup& operator=(const Grup& other) = default;
@@ -275,8 +282,9 @@ void Grup::AdaugaLibertate(const Pozitie& p) {
 std::ostream& operator<<(std::ostream& os, const Grup& grup) {
     os<<"--- Grup ID: "<<grup.id<<"---\n"
       <<"Culoare: "<<(grup.culoare == Culoare::Negru ? "Negru" : "Alb")<<"\n"
-      <<"Pietre: "<< grup.pozitiiPietre.size()<<" (" << (grup.capturat ? "CAPTURAT" : "Activ") << ")\n"
-      <<"Libertati (total " << grup.libertati.size()<<"): ";
+      <<"Pietre: "<< grup.pozitiiPietre.size()<<" (" << (grup.capturat ? "CAPTURAT" : "Activ") << ")\n";
+      // Folosim size() direct (unsigned long long) pentru a evita narrowing conversion la int
+      os<<"Libertati (total " << grup.libertati.size()<<"): ";
 
     os<<"{";
     bool first = true;
@@ -307,7 +315,7 @@ private:
 
     friend std::ostream& operator<<(std::ostream& os, const Reguli& r);
 
-    bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
+    [[nodiscard]]bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
 
     friend class Joc;
     friend void TestareJoc(std::istream& is);
@@ -347,10 +355,13 @@ std::ostream& operator<<(std::ostream& os, const Reguli& r) {
 //pentru a stoca o stare a tablei si a implementa regula Ko
 struct IstoricTabla {
     std::vector<std::vector<Culoare>> stareaTabla;
+    explicit IstoricTabla(const Tabla& t);
     bool operator==(const IstoricTabla& other) const {
         return stareaTabla == other.stareaTabla;
     }
 };
+IstoricTabla::IstoricTabla(const Tabla& t) : stareaTabla(t.getStareTabla()) {}
+
 //clasa pentru un joc
 class Joc {
 private:
@@ -361,8 +372,8 @@ private:
     unsigned int mutariEfectuate;
     std::vector<IstoricTabla> istoricStari;
 
-    std::set<Pozitie> gasesteGrup(const Pozitie& p) const;
-    std::set<Pozitie> gasesteLibertati(const std::set<Pozitie>& grup) const;
+    [[nodiscard]]std::set<Pozitie> gasesteGrup(const Pozitie& p) const;
+    [[nodiscard]]std::set<Pozitie> gasesteLibertati(const std::set<Pozitie>& grup) const;
     void stergeGrup(const std::set<Pozitie>& grup);
 
 public:
@@ -381,7 +392,7 @@ public:
     void CalculeazaScorFinal() const;
     void AfiseazaStareaJocului() const;
 
-    std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
+    [[nodiscard]]std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
         return gasesteGrup(p);
     }
 
@@ -397,8 +408,9 @@ Joc::Joc(Dimensiuni dim,
       jucatorAlb(numeA, 0, culoareA, tipA),
       reguli(permiteSuicid, regulaKo, false, komi, dim, 0),
       jucatorCurent(Culoare::Negru),
-      mutariEfectuate(0)
-{}
+      mutariEfectuate(0) {
+    this->istoricStari.emplace_back(this->tabla);
+}
 
 std::ostream& operator<<(std::ostream& os, const Joc& j) {
         os << "========== STAREA JOCULUI (" << (j.jucatorCurent == Culoare::Negru ? "Negru" : "Alb") << " la mutare) ==========\n";
@@ -490,7 +502,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
 
         tabla.Plaseazapiatra(p, culoareCurenta);
 
-        int capturiTotale = 0;
+        size_t capturiTotale = 0; // Folosim size_t (unsigned)
         std::vector<Pozitie> vecini = {
             {p.x, p.y -1}, {p.x, p.y + 1}, {p.x - 1, p.y}, {p.x + 1, p.y}
         };
@@ -499,7 +511,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
 
         for (const auto& vecin : vecini) {
             if (tabla.getPozitieCuloare(vecin) == culoareInamica) {
-                std::set<Pozitie> grupInamic = gasesteGrup(vecin);
+                auto grupInamic = gasesteGrup(vecin); // Folosim auto pentru a evita duplicarea tipului
 
                 if (gasesteLibertati(grupInamic).empty()) {
                     grupuriCapturate.push_back(grupInamic);
@@ -524,10 +536,13 @@ bool Joc::AplicaMutare(const Mutare& m) {
         }
 
         if (capturiTotale > 0) {
+            // Conversie explicită la unsigned int (tipul așteptat de AdaugaPietreCapturate)
+            unsigned int nr_capturi = (unsigned int)std::min((size_t)UINT_MAX, capturiTotale);
+
             if (jucatorCurent == Culoare::Negru)
-                jucatorNegru.AdaugaPietreCapturate(capturiTotale);
+                jucatorNegru.AdaugaPietreCapturate(nr_capturi);
             else
-                jucatorAlb.AdaugaPietreCapturate(capturiTotale);
+                jucatorAlb.AdaugaPietreCapturate(nr_capturi);
         }
 
         reguli.passConsecutive = 0;
@@ -544,7 +559,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
 }
 //calculare scor final: pietre capturate + teritoriu + komi
 void Joc::CalculeazaScorFinal() const {
-        float scorNegru = (float) jucatorNegru.pietreCapturate;
+        auto scorNegru = (float) jucatorNegru.pietreCapturate;
         float scorAlb = (float) jucatorAlb.pietreCapturate + reguli.komi;
 
         float teritoriuNegru = 0.0f;
@@ -594,7 +609,7 @@ void TestareJoc(std::istream& is) {
             // ...
         } else if (mutare_tip_str == "PLASEAZA") {
             if (!(is >> x >> y)) break;
-            m = Mutare({(unsigned int)x, (unsigned int)y}, tipM::plasare);
+            m = Mutare({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}, tipM::plasare);
         } else {
             continue;
         }
