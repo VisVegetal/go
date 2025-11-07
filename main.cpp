@@ -1,12 +1,10 @@
-#include <vector>
 #include <utility>
+#include <vector>
 #include <string>
 #include <fstream>
 #include <set>
 #include <iostream>
-#include <algorithm>
 #include <tuple>
-#include <sstream>
 
 //declarare pentru vizibilitate in clasele joc si reguli
 void TestareJoc(std::istream& is);
@@ -71,7 +69,7 @@ class Tabla {
 private:
     Dimensiuni dimensiune;
     std::vector<std::vector<Culoare>> tabla;
-    unsigned int getMarime() const {
+    [[nodiscard]]unsigned int getMarime() const {
         if (dimensiune == Dimensiuni::D9x9) return 9;
         if (dimensiune == Dimensiuni::D13x13) return 13;
         return 19;
@@ -91,10 +89,10 @@ public:
 
     void Plaseazapiatra (const Pozitie& p, Culoare c);
     void ScoatePiatra (const Pozitie& p);
-    bool esteGol(const Pozitie& p) const;
+    [[nodiscard]] bool esteGol(const Pozitie& p) const;
 
     //cititor de stare (grupuri, libertati)
-    Culoare getPozitieCuloare(const Pozitie& p) const {
+    [[nodiscard]] Culoare getPozitieCuloare(const Pozitie& p) const {
         unsigned int n = getMarime();
         if (p.x < n && p.y < n)
             return tabla[p.x][p.y];
@@ -164,7 +162,7 @@ private:
     tipJ tip_jucator;
 public:
     explicit Jucator(std::string nume_, unsigned int pietreCapturate_, Culoare piatra_curenta_, tipJ tip_jucator_)
-        : nume(nume_), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
+        : nume(std::move(nume_)), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
 
     Jucator(const Jucator& other) = default;
     Jucator& operator=(const Jucator& other) = default;
@@ -174,9 +172,9 @@ public:
 
     void AdaugaPietreCapturate(unsigned int nr);
 
-    std::string getNume() const { return nume; }
+    [[nodiscard]] std::string getNume() const { return nume; }
 
-    tipJ getTipJucator() const { return tip_jucator; }
+    [[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }
 
     friend class Joc;
 };
@@ -218,9 +216,9 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Mutare& m);
 
-    bool isPass() const;
+    [[nodiscard]] bool isPass() const;
 
-    Pozitie getPozitie() const {
+    [[nodiscard]] Pozitie getPozitie() const {
         return pozitie;
     }
 };
@@ -249,7 +247,7 @@ private:
     int id;
     public:
         explicit Grup(std::vector<Pozitie> pozitiiPietre_, std::set<Pozitie> libertati_, bool capturat_, Culoare culoare_, int id_)
-            : pozitiiPietre(pozitiiPietre_), libertati(libertati_), capturat(capturat_), culoare(culoare_), id(id_){}
+            : pozitiiPietre(std::move(pozitiiPietre_)), libertati(std::move(libertati_)), capturat(capturat_), culoare(culoare_), id(id_){}
 
     Grup(const Grup& other) = default;
     Grup& operator=(const Grup& other) = default;
@@ -262,10 +260,7 @@ private:
 
 //incearca sa adauge o noua pozitie goala (libertate) la grup
 void Grup::AdaugaLibertate(const Pozitie& p) {
-    std::pair<std::set<Pozitie>::iterator, bool> result = this->libertati.insert(p);
-    bool inserat = result.second;
-
-    if (inserat)
+    if (this->libertati.insert(p).second)
         std::cout<<"Libertate adaugata la: "<< p << " pentru grupul: "<< id << ".\n";
     else
         std::cerr<<"Libertatea "<<p<<" exista deja in Grupul "<< id << ".\n";
@@ -297,9 +292,11 @@ private:
     float komi;
     Dimensiuni dimensiuneTabla;
     unsigned int passConsecutive;
-    public:
-        explicit Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dimensiune_, unsigned int passConsecutive_)
-            :permiteSuicid(permiteSuicid_), regulaKo(regulaKo_), sfarsitJoc(sfarsitJoc_), komi(komi_), dimensiuneTabla(dimensiune_), passConsecutive(passConsecutive_) {}
+public:
+    explicit Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dimensiune_, unsigned int passConsecutive_)
+        :permiteSuicid(permiteSuicid_), regulaKo(regulaKo_), sfarsitJoc(sfarsitJoc_), komi(komi_), dimensiuneTabla(dimensiune_), passConsecutive(passConsecutive_) {}
+
+    [[nodiscard]] bool esteSfarsitJoc() const { return sfarsitJoc; }
 
     Reguli(const Reguli& other) = default;
     Reguli& operator=(const Reguli& other) = default;
@@ -307,11 +304,12 @@ private:
 
     friend std::ostream& operator<<(std::ostream& os, const Reguli& r);
 
-    bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
+    [[nodiscard]] bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
 
     friend class Joc;
     friend void TestareJoc(std::istream& is);
 };
+
 
 bool Reguli::isMutareValida(const Tabla &tabla, const Mutare &mutare) const {
     if (this->sfarsitJoc) {
@@ -359,10 +357,10 @@ private:
     Reguli reguli;
     Culoare jucatorCurent;
     unsigned int mutariEfectuate;
-    std::vector<IstoricTabla> istoricStari;
+    std::vector<IstoricTabla> istoricStari{};
 
-    std::set<Pozitie> gasesteGrup(const Pozitie& p) const;
-    std::set<Pozitie> gasesteLibertati(const std::set<Pozitie>& grup) const;
+    [[nodiscard]] std::set<Pozitie> gasesteGrup(const Pozitie& p) const;
+    [[nodiscard]] std::set<Pozitie> gasesteLibertati(const std::set<Pozitie>& grup) const;
     void stergeGrup(const std::set<Pozitie>& grup);
 
 public:
@@ -381,7 +379,7 @@ public:
     void CalculeazaScorFinal() const;
     void AfiseazaStareaJocului() const;
 
-    std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
+    [[nodiscard]] std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
         return gasesteGrup(p);
     }
 
@@ -490,7 +488,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
 
         tabla.Plaseazapiatra(p, culoareCurenta);
 
-        int capturiTotale = 0;
+        size_t capturiTotale = 0;
         std::vector<Pozitie> vecini = {
             {p.x, p.y -1}, {p.x, p.y + 1}, {p.x - 1, p.y}, {p.x + 1, p.y}
         };
@@ -542,9 +540,10 @@ bool Joc::AplicaMutare(const Mutare& m) {
 
     return true;
 }
+
 //calculare scor final: pietre capturate + teritoriu + komi
 void Joc::CalculeazaScorFinal() const {
-        float scorNegru = (float) jucatorNegru.pietreCapturate;
+        auto scorNegru = (float) jucatorNegru.pietreCapturate;
         float scorAlb = (float) jucatorAlb.pietreCapturate + reguli.komi;
 
         float teritoriuNegru = 0.0f;
@@ -569,10 +568,11 @@ void Joc::CalculeazaScorFinal() const {
 
         std::cout <<"==============================================\n";
     }
+
 // testare joc
 void TestareJoc(std::istream& is) {
     std::string numeN, numeA;
-    float komi;
+    float komi = 6.5f;
     Dimensiuni dim = Dimensiuni::D9x9;
 
     is >> komi;
@@ -601,11 +601,8 @@ void TestareJoc(std::istream& is) {
 
         std::cout << "Jucator " << (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume()) << " muta: " << m << "\n";
 
-        if (!jocGo.reguli.sfarsitJoc) {
+        if (!jocGo.reguli.esteSfarsitJoc()) {
             jocGo.AplicaMutare(m);
-        } else {
-            std::cout << "Jocul s-a terminat. Ignor mutarea.\n";
-            break;
         }
 
         jocGo.AfiseazaStareaJocului();
