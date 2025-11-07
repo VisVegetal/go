@@ -11,6 +11,19 @@ runs:
       with:
         path: cppcheck
         key: cppcheck-${{ env.CPPCHECK_VER }}
+    # ... (restul de la pasul Cache cppcheck) ...
+
+    - name: Build and Install Cppcheck
+      shell: bash
+      run: |
+        echo "Building Cppcheck..."
+        cd cppcheck
+        # 1. Configurare (Creează directorul 'build' și fișierele de build)
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        # 2. Compilare (Aceasta creează fișierul cmake_install.cmake care lipsea)
+        cmake --build build --config Release
+        # 3. Instalare (Acest pas rula anterior singur și eșua)
+        sudo cmake --install build
 
     - name: Build cppcheck
       shell: bash
