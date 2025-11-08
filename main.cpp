@@ -326,9 +326,6 @@ private:
 
     friend std::ostream& operator<<(std::ostream& os, const Grup& grup);
 
-    void AdaugaLibertate(const Pozitie& p) {
-        libertati.insert(p);
-    }
 };
 
 
