@@ -2,18 +2,32 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <limits>
 #include <set>
 #include <iostream>
 #include <tuple>
+#include <algorithm> // pentru std::swap
 
-//declarare pentru vizibilitate in clasele joc si reguli
-void TestareJoc(std::istream& is);
+
 
 enum class Culoare{Negru, Alb, Gol};
 enum class Dimensiuni{D9x9, D13x13, D19x19};
 enum class tipJ{uman};
 enum class tipM{plasare, pass}; // tipurile de mutari posibile
 //coordonatele x si y
+
+//declarare pentru vizibilitate in clasele joc si reguli
+void TestareJoc(std::istream& is, Dimensiuni dim);
+
+// Functie ajutatoare pentru a converti inputul numeric in Dimensiuni
+Dimensiuni getDimensiuneFromInput(int alegere) {
+    switch (alegere) {
+        case 9: return Dimensiuni::D9x9;
+        case 13: return Dimensiuni::D13x13;
+        case 19:
+        default: return Dimensiuni::D19x19; // 19x19 ca valoare implicita
+    }
+}
 
 struct Pozitie {
     unsigned int x, y;
@@ -44,9 +58,18 @@ public:
         : culoare(culoare_), pozitie({x, y}) {}
     friend std::ostream& operator<<(std::ostream& os, const Pietre& p);
 
-    Pietre(const Pietre& other) = default;
-    Pietre& operator=(const Pietre& other) = default;
-    ~Pietre() = default;
+    Pietre(const Pietre& other) :
+        culoare(other.culoare), pozitie(other.pozitie) {}
+
+    Pietre& operator=(const Pietre& other) {
+        if (this != &other) {
+            this->culoare = other.culoare;
+            this->pozitie = other.pozitie;
+        }
+        return *this;
+    }
+
+    ~Pietre() {}
 
     //schimbarea culorii, rar folosita in GO
     [[maybe_unused]]void SchimbaCuloarea() {
@@ -83,9 +106,18 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Tabla& t);
 
-    Tabla(const Tabla& other) = default;
-    Tabla& operator=(const Tabla& other) = default;
-    ~Tabla() = default;
+    Tabla(const Tabla& other) :
+        dimensiune(other.dimensiune), tabla(other.tabla) {}
+
+    Tabla& operator=(const Tabla& other) {
+        if (this != &other) {
+            this->dimensiune = other.dimensiune;
+            this->tabla = other.tabla;
+        }
+        return *this;
+    }
+
+    ~Tabla() {}
 
     void Plaseazapiatra (const Pozitie& p, Culoare c);
     void ScoatePiatra (const Pozitie& p);
@@ -164,9 +196,23 @@ public:
     explicit Jucator(std::string nume_, unsigned int pietreCapturate_, Culoare piatra_curenta_, tipJ tip_jucator_)
         : nume(std::move(nume_)), pietreCapturate(pietreCapturate_), piatra_curenta(piatra_curenta_), tip_jucator(tip_jucator_) {}
 
-    Jucator(const Jucator& other) = default;
-    Jucator& operator=(const Jucator& other) = default;
-    ~Jucator() = default;
+    Jucator(const Jucator& other) :
+        nume(other.nume),
+        pietreCapturate(other.pietreCapturate),
+        piatra_curenta(other.piatra_curenta),
+        tip_jucator(other.tip_jucator) {}
+
+    Jucator& operator=(const Jucator& other) {
+        if (this != &other) {
+            this->nume = other.nume;
+            this->pietreCapturate = other.pietreCapturate;
+            this->piatra_curenta = other.piatra_curenta;
+            this->tip_jucator = other.tip_jucator;
+        }
+        return *this;
+    }
+
+    ~Jucator() {}
 
     friend std::ostream& operator<<(std::ostream& os, const Jucator& j);
 
@@ -210,9 +256,18 @@ public:
     explicit Mutare(Pozitie pozitie_, tipM tip_m_)
         : pozitie(pozitie_), tip_m(tip_m_) {}
 
-    Mutare(const Mutare& other) = default;
-    Mutare& operator=(const Mutare& other) = default;
-    ~Mutare() = default;
+    Mutare(const Mutare& other) :
+        pozitie(other.pozitie), tip_m(other.tip_m) {}
+
+    Mutare& operator=(const Mutare& other) {
+        if (this != &other) {
+            this->pozitie = other.pozitie;
+            this->tip_m = other.tip_m;
+        }
+        return *this;
+    }
+
+    ~Mutare() {}
 
     friend std::ostream& operator<<(std::ostream& os, const Mutare& m);
 
@@ -237,7 +292,7 @@ std::ostream& operator<<(std::ostream& os, const Mutare& m) {
     return os;
 }
 
-//clasa geup
+//clasa grup
 class Grup {
 private:
     std::vector<Pozitie> pozitiiPietre;
@@ -249,13 +304,31 @@ private:
         explicit Grup(std::vector<Pozitie> pozitiiPietre_, std::set<Pozitie> libertati_, bool capturat_, Culoare culoare_, int id_)
             : pozitiiPietre(std::move(pozitiiPietre_)), libertati(std::move(libertati_)), capturat(capturat_), culoare(culoare_), id(id_){}
 
-    Grup(const Grup& other) = default;
-    Grup& operator=(const Grup& other) = default;
-    ~Grup() = default;
+    Grup(const Grup& other) :
+        pozitiiPietre(other.pozitiiPietre),
+        libertati(other.libertati),
+        capturat(other.capturat),
+        culoare(other.culoare),
+        id(other.id) {}
+
+    Grup& operator=(const Grup& other) {
+        if (this != &other) {
+            this->pozitiiPietre = other.pozitiiPietre;
+            this->libertati = other.libertati;
+            this->capturat = other.capturat;
+            this->culoare = other.culoare;
+            this->id = other.id;
+        }
+        return *this;
+    }
+
+    ~Grup() {}
 
     friend std::ostream& operator<<(std::ostream& os, const Grup& grup);
 
-    void AdaugaLibertate(const Pozitie& p);
+    void AdaugaLibertate(const Pozitie& p) {
+        libertati.insert(p);
+    }
 };
 
 
@@ -291,16 +364,34 @@ public:
 
     [[maybe_unused]][[nodiscard]] bool esteSfarsitJoc() const { return sfarsitJoc; }
 
-    Reguli(const Reguli& other) = default;
-    Reguli& operator=(const Reguli& other) = default;
-    ~Reguli() = default;
+    Reguli(const Reguli& other) :
+        permiteSuicid(other.permiteSuicid),
+        regulaKo(other.regulaKo),
+        sfarsitJoc(other.sfarsitJoc),
+        komi(other.komi),
+        dimensiuneTabla(other.dimensiuneTabla),
+        passConsecutive(other.passConsecutive) {}
+
+    Reguli& operator=(const Reguli& other) {
+        if (this != &other) {
+            this->permiteSuicid = other.permiteSuicid;
+            this->regulaKo = other.regulaKo;
+            this->sfarsitJoc = other.sfarsitJoc;
+            this->komi = other.komi;
+            this->dimensiuneTabla = other.dimensiuneTabla;
+            this->passConsecutive = other.passConsecutive;
+        }
+        return *this;
+    }
+
+    ~Reguli() {}
 
     friend std::ostream& operator<<(std::ostream& os, const Reguli& r);
 
     [[nodiscard]] bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
 
     friend class Joc;
-    friend void TestareJoc(std::istream& is);
+    friend void TestareJoc(std::istream& is, Dimensiuni dim);
 };
 
 
@@ -370,9 +461,24 @@ public:
                  const std::string& numeA, Culoare culoareA, tipJ tipA,
                  float komi, bool permiteSuicid, bool regulaKo);
 
-    Joc(const Joc& other) = default;
-    Joc& operator=(const Joc& other) = default;
-    ~Joc() = default;
+    Joc(const Joc& other) :
+        tabla(other.tabla),
+        jucatorNegru(other.jucatorNegru),
+        jucatorAlb(other.jucatorAlb),
+        reguli(other.reguli),
+        jucatorCurent(other.jucatorCurent),
+        mutariEfectuate(other.mutariEfectuate),
+        istoricStari(other.istoricStari) {}
+
+    Joc& operator=(const Joc& other) {
+        if (this != &other) {
+            Joc temp = other;
+            std::swap(*this, temp);
+        }
+        return *this;
+    }
+
+    ~Joc() {}
 
     friend std::ostream& operator<<(std::ostream& os, const Joc& j);
 
@@ -384,7 +490,7 @@ public:
         return gasesteGrup(p);
     }
 
-    friend void TestareJoc(std::istream& is);
+    friend void TestareJoc(std::istream& is, Dimensiuni dim);
 };
 
 void Joc::AnalizeazaTeritoriu(float& teritoriuNegru, float& teritoriuAlb) const {
@@ -528,7 +634,7 @@ std::set<Pozitie> Joc::gasesteLibertati(const std::set<Pozitie>& grup) const {
     }
     return libertati;
 }
-//marchează toate pietrele dintr-un grup ca goale pe tabla
+//marcheaza toate pietrele dintr-un grup ca goale pe tabla
 void Joc::stergeGrup(const std::set<Pozitie>& grup) {
         for (const auto& p : grup)
             tabla.ScoatePiatra(p);
@@ -573,16 +679,23 @@ bool Joc::AplicaMutare(const Mutare& m) {
         for (const auto& grupCapturat : grupuriCapturate) {
             capturiTotale += grupCapturat.size();
             stergeGrup(grupCapturat);
-            std::cout << "Capturat grup inamic de " << grupCapturat.size() << " pietre la " << p << "!\n";
+            // Mesaj mai explicit despre captura
+            std::cout << "--- CAPTURA! --- Grup inamic de " << grupCapturat.size() << " pietre capturat la " << p << ".\n";
         }
 
-        // verifică sinuciderea
+        // verifica sinuciderea
         std::set<Pozitie> grupCurent = gasesteGrup(p);
         if (gasesteLibertati(grupCurent).empty() && capturiTotale == 0) {
             if (!reguli.permiteSuicid) {
                 tabla.ScoatePiatra(p);
-                std::cerr << "Mutare invalida la " << p << ": Sinucidere interzisa!\n";
+                std::cerr << "Mutare invalida la " << p << ": Sinucidere interzisa! Piatra a fost retrasa.\n";
                 return false;
+            }
+            // Daca sinuciderea este permisa, ar trebui scoasa piatra
+            // Dar in regulile de Go moderne, piatra pusa se scoate
+            if(reguli.permiteSuicid) {
+                tabla.ScoatePiatra(p);
+                std::cout << "ATENTIE: Sinucidere! Piatra de la " << p << " a fost scoasa. Mutare permisa prin reguli.\n";
             }
         }
 
@@ -591,7 +704,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
             if (!istoricStari.empty() && stareCurenta == istoricStari.back()) {
                 // anulare KO, reface starea tablei la cum era inainte de mutare
                 tabla.tabla = stareAnterioara.stareaTabla;
-                std::cerr << "Mutare invalida la " << p << ": Incalca Regula Ko! Starea tablei s-ar repeta.\n";
+                std::cerr << "Mutare invalida la " << p << ": INCALCA REGLULA KO! Starea tablei s-ar repeta. Mutare anulata.\n";
                 return false;
             }
         }
@@ -611,7 +724,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
     jucatorCurent = culoareInamica;
     if (reguli.passConsecutive >= 2) {
         reguli.sfarsitJoc = true;
-        std::cout << "Jocul s-a încheiat prin 2 Pass-uri consecutive!\n";
+        std::cout << "Jocul s-a incheiat prin **2 Pass-uri consecutive**!\n";
     }
 
     return true;
@@ -631,93 +744,118 @@ void Joc::CalculeazaScorFinal() const {
         scorAlb += teritoriuAlb;
 
         std::cout << "\n============== CALCUL SCOR FINAL =============\n";
-        std::cout << "Capturi Negru: "<< jucatorNegru.pietreCapturate << " (+ Teritoriu: " << teritoriuNegru << ")\n";
-        std::cout << "Capturi Alb: "<< jucatorAlb.pietreCapturate << " (+ Komi: " << reguli.komi << " + Teritoriu: " << teritoriuAlb << ")\n";
+        std::cout << "  **SCOR NEGRU (Pietre + Teritoriu)**\n";
+        std::cout << "  - Capturi: "<< jucatorNegru.pietreCapturate << "\n";
+        std::cout << "  - Teritoriu: " << teritoriuNegru << "\n";
+        std::cout << "\n  **SCOR ALB (Pietre + Komi + Teritoriu)**\n";
+        std::cout << "  - Capturi: "<< jucatorAlb.pietreCapturate << "\n";
+        std::cout << "  - Komi: " << reguli.komi << "\n";
+        std::cout << "  - Teritoriu: " << teritoriuAlb << "\n";
 
         std::cout<< "\n** SCOR FINAL NEGRU: " << scorNegru << " **\n";
         std::cout << "** SCOR FINAL ALB: " << scorAlb << " **\n";
 
         if (scorNegru > scorAlb)
-            std::cout << "CÂȘTIGĂ JUCĂTORUL NEGRU!\n";
+            std::cout << "🎉 CASTIGA JUCATORUL NEGRU! 🎉\n";
         else if (scorNegru < scorAlb)
-            std::cout << "CÂȘTIGĂ JUCĂTORUL ALB!\n";
+            std::cout << "🎉 CASTIGA JUCATORUL ALB! 🎉\n";
         else
-            std::cout << "REMIZĂ (JIGO)!\n";
+            std::cout << "🤝 REMIZA (JIGO)! 🤝\n";
 
         std::cout <<"==============================================\n";
     }
 
 // testare joc
-void TestareJoc(std::istream& is) {
+void TestareJoc(std::istream& is, Dimensiuni dim) {
     std::string numeN, numeA;
     float komi = 6.5f;
-    Dimensiuni dim = Dimensiuni::D9x9;
 
+    // Citirea Komi si a numelor jucatorilor
+    std::cout << "Introduceti Komi (ex: 6.5): ";
     is >> komi;
-    is >> numeN >> numeA;
+    std::cout << "Introduceti numele jucatorului Negru: ";
+    is >> numeN;
+    std::cout << "Introduceti numele jucatorului Alb: ";
+    is >> numeA;
 
     Joc jocGo(dim, numeN, Culoare::Negru, tipJ::uman, numeA, Culoare::Alb, tipJ::uman, komi, false, true);
 
-    std::cout << "===== INITIERE JOC =====\n";
+    std::string dim_str = (dim == Dimensiuni::D9x9 ? "9x9" : (dim == Dimensiuni::D13x13 ? "13x13" : "19x19"));
+    std::cout << "\n============================================\n";
+    std::cout << "===== INITIERE JOC Go (" << dim_str << ") =====";
+    std::cout << "\n============================================\n";
     jocGo.AfiseazaStareaJocului();
 
     std::string mutare_tip_str;
     int x, y;
+    unsigned int mutare_nr = 1;
 
     std::cout << "\n===== SIMULARE MUTARI (AplicaMutare) =====\n";
-    while (is >> mutare_tip_str) {
+    std::cout << "Formatul mutarilor: **PLASEAZA x y** (ex: PLASEAZA 3 3) sau **PASS**\n\n";
+
+    while (true) {
+        std::cout << "Mutarea " << mutare_nr << " (" << (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume()) << "): ";
+
+        if (!(is >> mutare_tip_str)) break;
+
         Mutare m({0, 0}, tipM::pass);
+        std::string jucator = (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume());
+        std::string culoare = (jocGo.jucatorCurent == Culoare::Negru ? "Negru (N)" : "Alb (A)");
+
+        std::cout << "--- MUTAREA "<< mutare_nr << " - Jucator: **" << jucator << "** (" << culoare << ") ---\n";
 
         if (mutare_tip_str == "PASS") {
-            // ...
+            std::cout << "> Jucatorul a ales să **Paseze**.\n";
         } else if (mutare_tip_str == "PLASEAZA") {
             if (!(is >> x >> y)) break;
             m = Mutare({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}, tipM::plasare);
+            std::cout << "> Plaseaza piatra la coordonatele: **x=" << x << ", y=" << y << "**\n";
         } else {
+            std::cout << "> Eroare: Tip de mutare necunoscut '" << mutare_tip_str << "'. Reincercati cu PLASEAZA sau PASS.\n";
             continue;
         }
-
-        std::cout << "Jucator " << (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume()) << " muta: " << m << "\n";
 
         jocGo.AplicaMutare(m);
 
 
         jocGo.AfiseazaStareaJocului();
+        mutare_nr++;
 
         if (jocGo.reguli.sfarsitJoc) break;
     }
 
-    jocGo.CalculeazaScorFinal();
+    if(jocGo.reguli.sfarsitJoc)
+        jocGo.CalculeazaScorFinal();
+    else
+        std::cout << "\nJocul s-a oprit inainte de final din cauza lipsei de mutari in intrare.\n";
 }
 
 int main() {
-    std::ifstream input_file("input.txt");
-    if (!input_file.is_open()) {
-        std::cerr << "Eroare: Nu s-a putut deschide input.txt\n";
-        return 1;
+    std::cout << "========================================================\n";
+    std::cout << "         JOC DE GO - SIMULARE CONSOLA INTERACTIVA\n";
+    std::cout << "========================================================\n\n";
+
+    int dim_alegere = 0;
+    while (dim_alegere != 9 && dim_alegere != 13 && dim_alegere != 19) {
+        std::cout << "Alegeti dimensiunea tablei (Introduceti 9, 13 sau 19): ";
+        if (!(std::cin >> dim_alegere)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            dim_alegere = 0;
+            std::cout << "Intrare invalida. Va rugam introduceti doar numarul 9, 13 sau 19.\n";
+        }
     }
 
-    std::ofstream output_file("output.txt");
-    if (!output_file.is_open()) {
-        std::cerr << "Eroare: Nu s-a putut deschide output.txt\n";
-        return 1;
-    }
+    Dimensiuni dim = getDimensiuneFromInput(dim_alegere);
 
-    std::streambuf* old_cin = std::cin.rdbuf();
-    std::streambuf* old_cout = std::cout.rdbuf();
+    std::cout << "\n--------------------------------------------------------\n";
+    std::cout << "Tabla aleasa: **" << dim_alegere << "x" << dim_alegere << "**\n";
+    std::cout << "--------------------------------------------------------\n";
 
-    std::cin.rdbuf(input_file.rdbuf());
-    std::cout.rdbuf(output_file.rdbuf());
 
-    TestareJoc(std::cin);
+    TestareJoc(std::cin, dim);
 
-    std::cin.rdbuf(old_cin);
-    std::cout.rdbuf(old_cout);
-
-    input_file.close();
-    output_file.close();
-
-    std::cerr << "Executie finalizata. Rezultatele sunt in output.txt.\n";
+    std::cerr << "\nExecutie finalizata.\n";
 
     return 0;
 }
