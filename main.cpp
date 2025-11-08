@@ -1,4 +1,4 @@
-#include <utility>
+#include <utility> // pentru std:: move si std::swap
 #include <vector>
 #include <string>
 #include <fstream>
@@ -28,7 +28,7 @@ Dimensiuni getDimensiuneFromInput(int alegere) {
         default: return Dimensiuni::D19x19; // 19x19 ca valoare implicita
     }
 }
-
+//coordonatele unei pozitii pe tabla (x,y)
 struct Pozitie {
     unsigned int x, y;
     bool operator<(const Pozitie& other) const {
@@ -80,6 +80,7 @@ public:
     }
 };
 
+//afisarea unei pietre
 std::ostream& operator<<(std::ostream& os, const Pietre& p) {
     std::string culoare_str = (p.culoare == Culoare::Negru ? "Negru" : (p.culoare == Culoare::Alb ? "Alb" : "Gol"));
     os << "Piatra de culoare: " << culoare_str<< " la " <<p.pozitie;
@@ -92,6 +93,8 @@ class Tabla {
 private:
     Dimensiuni dimensiune;
     std::vector<std::vector<Culoare>> tabla;
+
+    //functie pentru a obtine dimensiunile tablei, de forma n x n
     [[nodiscard]]unsigned int getMarime() const {
         if (dimensiune == Dimensiuni::D9x9) return 9;
         if (dimensiune == Dimensiuni::D13x13) return 13;
@@ -123,7 +126,7 @@ public:
     void ScoatePiatra (const Pozitie& p);
     [[nodiscard]] bool esteGol(const Pozitie& p) const;
 
-    //cititor de stare (grupuri, libertati)
+    //cititor de stare, returneaza culoarea pietrei de la o anumita pozitie
     [[nodiscard]] Culoare getPozitieCuloare(const Pozitie& p) const {
         unsigned int n = getMarime();
         if (p.x < n && p.y < n)
@@ -218,6 +221,7 @@ public:
 
     void AdaugaPietreCapturate(unsigned int nr);
 
+    //getters pentru nume si tipul de jucator
     [[nodiscard]] const std::string& getNume() const { return nume; }
 
     [[maybe_unused]][[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }
@@ -271,8 +275,10 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Mutare& m);
 
+    //verifica daca mutarea e de tip pass
     [[nodiscard]] bool isPass() const;
 
+    //getter pentru pozitie
     [[nodiscard]] Pozitie getPozitie() const {
         return pozitie;
     }
@@ -352,7 +358,7 @@ std::ostream& operator<<(std::ostream& os, const Grup& grup) {
 class Reguli {
 private:
     bool permiteSuicid, regulaKo, sfarsitJoc;
-    float komi;
+    float komi; //puncte adaugate jucatorului alb, pentru ca negru incepe
     Dimensiuni dimensiuneTabla;
     unsigned int passConsecutive;
 public:
@@ -385,13 +391,14 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Reguli& r);
 
+    //verifica daca o mutate este valida
     [[nodiscard]] bool isMutareValida(const Tabla& tabla, const Mutare& mutare) const;
 
     friend class Joc;
     friend void TestareJoc(std::istream& is, Dimensiuni dim);
 };
 
-
+//verifica validitatea mutarii
 bool Reguli::isMutareValida(const Tabla &tabla, const Mutare &mutare) const {
     if (this->sfarsitJoc) {
         std::cerr<<"Mutare invalida. Sfarsit joc\n";
@@ -490,6 +497,7 @@ public:
     friend void TestareJoc(std::istream& is, Dimensiuni dim);
 };
 
+//numara teritoriile dupa ce jocul s-a incheiat
 void Joc::AnalizeazaTeritoriu(float& teritoriuNegru, float& teritoriuAlb) const {
     unsigned int n = tabla.getMarime();
     std::vector<std::vector<bool>> vizitat(n, std::vector<bool>(n, false));
@@ -563,6 +571,7 @@ Joc::Joc(Dimensiuni dim,
       mutariEfectuate(0)
 {}
 
+//afisarea jocului
 std::ostream& operator<<(std::ostream& os, const Joc& j) {
         os << "========== STAREA JOCULUI (" << (j.jucatorCurent == Culoare::Negru ? "Negru" : "Alb") << " la mutare) ==========\n";
         os << j.tabla;
