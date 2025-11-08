@@ -49,12 +49,12 @@ public:
     ~Pietre() = default;
 
     //schimbarea culorii, rar folosita in GO
-    void SchimbaCuloarea() {
+    /*void SchimbaCuloarea() {
         if (this->culoare == Culoare::Negru)
             this->culoare = Culoare::Alb;
         else
             this->culoare = Culoare::Negru;
-    }
+    }*/
 };
 
 std::ostream& operator<<(std::ostream& os, const Pietre& p) {
@@ -174,7 +174,7 @@ public:
 
     [[nodiscard]] std::string getNume() const { return nume; }
 
-    [[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }
+    /*[[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }*/
 
     friend class Joc;
 };
@@ -258,13 +258,13 @@ private:
     void AdaugaLibertate(const Pozitie& p);
 };
 
-//incearca sa adauge o noua pozitie goala (libertate) la grup
-void Grup::AdaugaLibertate(const Pozitie& p) {
-    if (this->libertati.insert(p).second)
-        std::cout<<"Libertate adaugata la: "<< p << " pentru grupul: "<< id << ".\n";
-    else
-        std::cerr<<"Libertatea "<<p<<" exista deja in Grupul "<< id << ".\n";
-}
+    //incearca sa adauge o noua pozitie goala (libertate) la grup
+    /*void Grup::AdaugaLibertate(const Pozitie& p) {
+        if (this->libertati.insert(p).second)
+            std::cout<<"Libertate adaugata la: "<< p << " pentru grupul: "<< id << ".\n";
+        else
+            std::cerr<<"Libertatea "<<p<<" exista deja in Grupul "<< id << ".\n";
+    }*/
 
 //afisarea detaliilor grupului
 std::ostream& operator<<(std::ostream& os, const Grup& grup) {
@@ -296,7 +296,7 @@ public:
     explicit Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dimensiune_, unsigned int passConsecutive_)
         :permiteSuicid(permiteSuicid_), regulaKo(regulaKo_), sfarsitJoc(sfarsitJoc_), komi(komi_), dimensiuneTabla(dimensiune_), passConsecutive(passConsecutive_) {}
 
-    [[nodiscard]] bool esteSfarsitJoc() const { return sfarsitJoc; }
+    /*[[nodiscard]] bool esteSfarsitJoc() const { return sfarsitJoc; }*/
 
     Reguli(const Reguli& other) = default;
     Reguli& operator=(const Reguli& other) = default;
@@ -387,9 +387,9 @@ public:
     void CalculeazaScorFinal() const;
     void AfiseazaStareaJocului() const;
 
-    [[nodiscard]] std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
+    /*[[nodiscard]] std::set<Pozitie> PublicGasesteGrup(const Pozitie& p) const {
         return gasesteGrup(p);
-    }
+    }*/
 
     friend void TestareJoc(std::istream& is);
 };
