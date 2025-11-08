@@ -363,6 +363,14 @@ private:
     [[nodiscard]] std::set<Pozitie> gasesteLibertati(const std::set<Pozitie>& grup) const;
     void stergeGrup(const std::set<Pozitie>& grup);
 
+    void AnalizeazaTeritoriu(float& teritoriuNegru, float& teritoriuAlb) const;
+
+    [[nodiscard]] IstoricTabla getStareCurentaTabla() const {
+        IstoricTabla stare;
+        stare.stareaTabla = tabla.tabla;
+        return stare;
+    }
+
 public:
     explicit Joc(Dimensiuni dim,
                  const std::string& numeN, Culoare culoareN, tipJ tipN,
@@ -385,6 +393,67 @@ public:
 
     friend void TestareJoc(std::istream& is);
 };
+
+void Joc::AnalizeazaTeritoriu(float& teritoriuNegru, float& teritoriuAlb) const {
+    unsigned int n = tabla.getMarime();
+    std::vector<std::vector<bool>> vizitat(n, std::vector<bool>(n, false));
+
+    for (unsigned int i = 0; i < n; ++i) {
+        for (unsigned int j = 0; j < n; ++j) {
+            Pozitie p = {i, j};
+
+            if (tabla.getPozitieCuloare(p) == Culoare::Gol && !vizitat[i][j]) {
+
+                // 1. Gaseste un grup (Ochi) de spatii goale conectate
+                std::set<Pozitie> zonaGol;
+                std::vector<Pozitie> coada;
+                coada.push_back(p);
+                vizitat[i][j] = true;
+
+                std::set<Culoare> culoriApropiate; // Culoarea pietrelor care inconjoara zona
+                unsigned int puncteZona = 0;
+
+                while (!coada.empty()) {
+                    Pozitie curenta = coada.back();
+                    coada.pop_back();
+                    zonaGol.insert(curenta);
+                    puncteZona++;
+
+                    std::vector<Pozitie> vecini = {
+                        {curenta.x, curenta.y - 1}, {curenta.x, curenta.y + 1},
+                        {curenta.x - 1, curenta.y}, {curenta.x + 1, curenta.y}
+                    };
+
+                    for (const auto& vecin : vecini) {
+                        if (vecin.x < n && vecin.y < n) {
+                            Culoare culoareVecin = tabla.getPozitieCuloare(vecin);
+
+                            if (culoareVecin == Culoare::Gol) {
+                                if (!vizitat[vecin.x][vecin.y]) {
+                                    vizitat[vecin.x][vecin.y] = true;
+                                    coada.push_back(vecin);
+                                }
+                            } else {
+                                culoriApropiate.insert(culoareVecin);
+                            }
+                        }
+                    }
+                }
+
+                // determina proprietarul teritoriului
+                if (culoriApropiate.size() == 1) {
+                    Culoare proprietar = *culoriApropiate.begin();
+                    if (proprietar == Culoare::Negru) {
+                        teritoriuNegru += static_cast<float>(puncteZona);
+                    } else if (proprietar == Culoare::Alb) {
+                        teritoriuAlb += static_cast<float>(puncteZona);
+                    }
+                }
+                // daca culoriApropiate.size() > 1 (e inconjurat de N si A) => teritoriu neutru (dama)
+            }
+        }
+    }
+}
 
 Joc::Joc(Dimensiuni dim,
          const std::string& numeN, Culoare culoareN, tipJ tipN,
@@ -484,6 +553,8 @@ bool Joc::AplicaMutare(const Mutare& m) {
         reguli.passConsecutive++;
     }
     else {
+        IstoricTabla stareAnterioara = getStareCurentaTabla();
+
         Pozitie p = m.getPozitie();
 
         tabla.Plaseazapiatra(p, culoareCurenta);
@@ -505,6 +576,7 @@ bool Joc::AplicaMutare(const Mutare& m) {
             }
         }
 
+
         for (const auto& grupCapturat : grupuriCapturate) {
             capturiTotale += grupCapturat.size();
             stergeGrup(grupCapturat);
@@ -521,12 +593,23 @@ bool Joc::AplicaMutare(const Mutare& m) {
             }
         }
 
+        if (reguli.regulaKo && capturiTotale > 0) {
+            IstoricTabla stareCurenta = getStareCurentaTabla();
+            if (!istoricStari.empty() && stareCurenta == istoricStari.back()) {
+                // anulare KO, reface starea tablei la cum era inainte de mutare
+                tabla.tabla = stareAnterioara.stareaTabla;
+                std::cerr << "Mutare invalida la " << p << ": Incalca Regula Ko! Starea tablei s-ar repeta.\n";
+                return false;
+            }
+        }
         if (capturiTotale > 0) {
             if (jucatorCurent == Culoare::Negru)
                 jucatorNegru.AdaugaPietreCapturate(capturiTotale);
             else
                 jucatorAlb.AdaugaPietreCapturate(capturiTotale);
         }
+
+        istoricStari.push_back(getStareCurentaTabla());
 
         reguli.passConsecutive = 0;
         mutariEfectuate++;
@@ -548,6 +631,8 @@ void Joc::CalculeazaScorFinal() const {
 
         float teritoriuNegru = 0.0f;
         float teritoriuAlb = 0.0f;
+
+        AnalizeazaTeritoriu(teritoriuNegru, teritoriuAlb);
 
         scorNegru += teritoriuNegru;
         scorAlb += teritoriuAlb;
@@ -602,7 +687,7 @@ void TestareJoc(std::istream& is) {
         std::cout << "Jucator " << (jocGo.jucatorCurent == Culoare::Negru ? jocGo.jucatorNegru.getNume() : jocGo.jucatorAlb.getNume()) << " muta: " << m << "\n";
 
         jocGo.AplicaMutare(m);
-        
+
 
         jocGo.AfiseazaStareaJocului();
 
