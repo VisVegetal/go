@@ -258,13 +258,6 @@ private:
     void AdaugaLibertate(const Pozitie& p);
 };
 
-    //incearca sa adauge o noua pozitie goala (libertate) la grup
-    [[maybe_unused]]void Grup::AdaugaLibertate(const Pozitie& p) {
-        if (this->libertati.insert(p).second)
-            std::cout<<"Libertate adaugata la: "<< p << " pentru grupul: "<< id << ".\n";
-        else
-            std::cerr<<"Libertatea "<<p<<" exista deja in Grupul "<< id << ".\n";
-    }
 
 //afisarea detaliilor grupului
 std::ostream& operator<<(std::ostream& os, const Grup& grup) {
