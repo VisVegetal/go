@@ -172,7 +172,7 @@ public:
 
     void AdaugaPietreCapturate(unsigned int nr);
 
-    [[nodiscard]] std::string getNume() const { return nume; }
+    [[nodiscard]] const std::string& getNume() const { return nume; }
 
     [[maybe_unused]][[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }
 
