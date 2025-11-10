@@ -70,14 +70,6 @@ public:
     }
 
     ~Pietre() {}
-
-    //schimbarea culorii, rar folosita in GO
-    [[maybe_unused]]void SchimbaCuloarea() {
-        if (this->culoare == Culoare::Negru)
-            this->culoare = Culoare::Alb;
-        else
-            this->culoare = Culoare::Negru;
-    }
 };
 
 //afisarea unei pietre
@@ -224,8 +216,6 @@ public:
     //getters pentru nume si tipul de jucator
     [[nodiscard]] const std::string& getNume() const { return nume; }
 
-    [[maybe_unused]][[nodiscard]] tipJ getTipJucator() const { return tip_jucator; }
-
     friend class Joc;
 };
 
@@ -365,7 +355,6 @@ public:
     explicit Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dimensiune_, unsigned int passConsecutive_)
         :permiteSuicid(permiteSuicid_), regulaKo(regulaKo_), sfarsitJoc(sfarsitJoc_), komi(komi_), dimensiuneTabla(dimensiune_), passConsecutive(passConsecutive_) {}
 
-    [[maybe_unused]][[nodiscard]] bool esteSfarsitJoc() const { return sfarsitJoc; }
 
     Reguli(const Reguli& other) :
         permiteSuicid(other.permiteSuicid),
