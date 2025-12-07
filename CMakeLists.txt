@@ -51,6 +51,27 @@ include(cmake/CopyHelper.cmake)
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
         test.cpp
+        GoRules.hpp
+        GoRules.cpp
+        GoExceptions.hpp
+        BoardObject.hpp
+        BoardObject.cpp
+        Stone.hpp
+        Stone.cpp
+        FortifiedStone.cpp
+        FortifiedStone.hpp
+        Player.hpp
+        Player.cpp
+        Board.hpp
+        Board.cpp
+        Game.hpp
+        Game.cpp
+        Interface.hpp
+        Interface.cpp
+        HumanPlayer.cpp
+        HumanPlayer.hpp
+        AIPlayer.cpp
+        AIPlayer.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

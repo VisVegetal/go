@@ -1,0 +1,8 @@
+//
+// Created by nicul on 12/7/2025.
+//
+
+#ifndef OOP_FORTIFIEDSTONE_HPP
+#define OOP_FORTIFIEDSTONE_HPP
+
+#endif //OOP_FORTIFIEDSTONE_HPP
