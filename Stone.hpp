@@ -1,8 +1,20 @@
-//
-// Created by nicul on 12/7/2025.
-//
+#ifndef STONE_HPP
+#define STONE_HPP
 
-#ifndef OOP_STONE_HPP
-#define OOP_STONE_HPP
+#include "BoardObject.hpp"
 
-#endif //OOP_STONE_HPP
+class Stone : public BoardObject {
+private:
+public:
+    Stone(int row, int col, ObjectColor c);
+
+    virtual ~Stone() = default;
+
+    virtual BoardObject* clone() const override;
+
+    virtual char getDisplayChar() const override;
+
+    Stone(const Stone& other);
+    Stone& operator=(const Stone& other);
+};
+#endif
