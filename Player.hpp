@@ -21,12 +21,10 @@ public:
     virtual ~Player() = default;
 
     virtual std::pair<int, int> getMove() const = 0;
+    virtual Player* clone() const = 0;
 
     std::string getName() const;
     StoneColor getColor() const;
-
-    Player(const  Player& other);
-    Player& operator=(const  Player& other);
 };
 
 #endif

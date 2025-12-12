@@ -1,11 +1,13 @@
 #include "Player.hpp"
-#include <algorithm> //swap
+#include <algorithm>
 
-Player::Player(const std::string& n, StoneColor c)
-    : name(n), color(c) {}
+Player::Player(const std::string& n, StoneColor c) : name(n), color(c) {}
 
-Player::Player(const Player& other)
-    : name(other.name), color(other.color) {}
+Player::Player(const Player& other) :
+    name(other.name),
+    color(other.color)
+{
+}
 
 Player& Player::operator=(const Player& other) {
     Player temp(other);
@@ -13,6 +15,7 @@ Player& Player::operator=(const Player& other) {
     using std::swap;
     swap(name, temp.name);
     swap(color, temp.color);
+
     return *this;
 }
 

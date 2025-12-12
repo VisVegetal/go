@@ -1,8 +1,18 @@
-//
-// Created by nicul on 12/7/2025.
-//
+#ifndef HUMAN_PLAYER_HPP
+#define HUMAN_PLAYER_HPP
 
-#ifndef OOP_HUMANPLAYER_HPP
-#define OOP_HUMANPLAYER_HPP
+#include "Player.hpp"
 
-#endif //OOP_HUMANPLAYER_HPP
+class HumanPlayer : public Player {
+public:
+    HumanPlayer(const std::string& n, StoneColor c);
+    virtual ~HumanPlayer() = default;
+
+    virtual std::pair<int, int> getMove() const override;
+    virtual Player* clone() const override;
+
+    HumanPlayer(const HumanPlayer& other);
+    HumanPlayer& operator=(const HumanPlayer& other);
+};
+
+#endif

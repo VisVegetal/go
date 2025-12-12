@@ -10,7 +10,6 @@ BoardObject* Stone::clone() const {
 char Stone::getDisplayChar() const {
     if (getColor() == ObjectColor::Black)
         return 'B';
-
     return 'W';
 }
 

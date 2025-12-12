@@ -25,7 +25,7 @@ public:
 
     virtual int getCaptureResistance() const;
 
-    BoardObject(const BoardObject&);
+    BoardObject(const BoardObject& other);
     BoardObject& operator=(const BoardObject& other);
 
     std::pair<int, int> getCoords() const;

@@ -1,8 +1,27 @@
-//
-// Created by nicul on 12/7/2025.
-//
+#ifndef AI_PLAYER_HPP
+#define AI_PLAYER_HPP
 
-#ifndef OOP_AIPLAYER_HPP
-#define OOP_AIPLAYER_HPP
+#include "Player.hpp"
 
-#endif //OOP_AIPLAYER_HPP
+class AIPlayer : public Player {
+private:
+    int difficultyLevel;
+
+public:
+    AIPlayer(const std::string& n, StoneColor c, int level);
+    virtual ~AIPlayer() = default;
+
+    virtual std::pair<int, int> getMove() const override;
+    virtual Player* clone() const override;
+
+    // Copy and Swap
+    AIPlayer(const AIPlayer& other);
+    AIPlayer& operator=(const AIPlayer& other);
+
+    int getDifficultyLevel() const;
+
+private:
+    std::pair<int, int> calculateBestMove() const;
+};
+
+#endif

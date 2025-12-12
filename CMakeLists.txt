@@ -22,22 +22,22 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
+include(FetchContent)
 #
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
 #         - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#         SomeLib
-#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-# )
+FetchContent_Declare(
+         SFML
+         GIT_REPOSITORY https://github.com/SFML/SFML.git
+         GIT_TAG        v1.0 # <which tag/branch @ <some_date>>
+         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+)
 #
-# FetchContent_MakeAvailable(SomeLib)
+FetchContent_MakeAvailable(SFML)
 
 ###############################################################################
 
@@ -81,6 +81,11 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
 
+target_link_libraries(${MAIN_EXECUTABLE_NAME}
+    sfml-graphics
+    sfml-window
+    sfml-system
+)
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
