@@ -5,16 +5,17 @@
 #include <string>
 
 class CustomGoException : public std::exception {
-private:
+protected:
     std::string message;
 
 public:
     CustomGoException(const std::string& msg) : message(msg) {}
+    virtual ~CustomGoException() noexcept override = default;
 
     virtual const char* what() const noexcept override {
         return message.c_str();
     }
-    virtual ~CustomGoException() noexcept = default;
+
 };
 class InvalidMoveException : public CustomGoException {
 public:

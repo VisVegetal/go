@@ -1,6 +1,7 @@
 #include "GoRules.hpp"
 
 const double GoRules::KOMI_VALUE = 6.5;
+
 int GoRules::getBoardSize() {
     return DEFAULT_BOARD_SIZE;
 }

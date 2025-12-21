@@ -33,7 +33,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 FetchContent_Declare(
          SFML
          GIT_REPOSITORY https://github.com/SFML/SFML.git
-         GIT_TAG        v1.0 # <which tag/branch @ <some_date>>
+         GIT_TAG        3.0.2 # <which tag/branch @ <some_date>>
          GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
 #
@@ -67,11 +67,12 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Game.hpp
         Game.cpp
         Interface.hpp
-        Interface.cpp
+        GUI.cpp
         HumanPlayer.cpp
         HumanPlayer.hpp
         AIPlayer.cpp
         AIPlayer.hpp
+        GUI.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

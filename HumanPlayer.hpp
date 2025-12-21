@@ -6,10 +6,9 @@
 class HumanPlayer : public Player {
 public:
     HumanPlayer(const std::string& n, StoneColor c);
-    virtual ~HumanPlayer() = default;
 
-    virtual std::pair<int, int> getMove() const override;
-    virtual Player* clone() const override;
+    std::pair<int, int> getMove() const override;
+     Player* clone() const override;
 
     HumanPlayer(const HumanPlayer& other);
     HumanPlayer& operator=(const HumanPlayer& other);

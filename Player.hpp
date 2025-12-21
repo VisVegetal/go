@@ -20,6 +20,9 @@ public:
 
     virtual ~Player() = default;
 
+    Player(const Player& other);
+    Player& operator=(const Player& other);
+
     virtual std::pair<int, int> getMove() const = 0;
     virtual Player* clone() const = 0;
 

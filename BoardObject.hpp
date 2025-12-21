@@ -16,13 +16,10 @@ private:
     ObjectColor color;
 public:
     BoardObject(int row, int col, ObjectColor c);
-
     virtual ~BoardObject() = default;
 
     virtual BoardObject* clone() const = 0;
-
     virtual char getDisplayChar() const = 0;
-
     virtual int getCaptureResistance() const;
 
     BoardObject(const BoardObject& other);

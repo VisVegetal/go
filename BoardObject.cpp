@@ -8,11 +8,12 @@ BoardObject::BoardObject(const BoardObject& other)
     : coords(other.coords), color(other.color) {}
 
 BoardObject& BoardObject::operator=(const BoardObject& other) {
-    BoardObject temp(other);
-
-    using std::swap;
-    swap(coords, temp.coords);
-    swap(color, temp.color);
+    if (this ! &>other) {
+        BoardObject temp(other);
+        using std::swap;
+        swap(coords, temp.coords);
+        swap(color, temp.color);
+    }
     return *this;
 }
 
