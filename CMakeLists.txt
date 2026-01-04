@@ -22,22 +22,22 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-include(FetchContent)
+# include(FetchContent)
 #
-set(FETCHCONTENT_QUIET OFF)
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+# set(FETCHCONTENT_QUIET OFF)
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
 #         - .github/workflows/cmake.yml
-FetchContent_Declare(
-         SFML
-         GIT_REPOSITORY https://github.com/SFML/SFML.git
-         GIT_TAG        3.0.2 # <which tag/branch @ <some_date>>
-         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-)
+# FetchContent_Declare(
+#         SomeLib
+#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
+#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
+#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+# )
 #
-FetchContent_MakeAvailable(SFML)
+# FetchContent_MakeAvailable(SomeLib)
 
 ###############################################################################
 
@@ -49,30 +49,8 @@ FetchContent_MakeAvailable(SFML)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-        test.cpp
-        GoRules.hpp
-        GoRules.cpp
-        GoExceptions.hpp
-        BoardObject.hpp
-        BoardObject.cpp
-        Stone.hpp
-        Stone.cpp
-        FortifiedStone.cpp
-        FortifiedStone.hpp
-        Player.hpp
-        Player.cpp
-        Board.hpp
-        Board.cpp
-        Game.hpp
-        Game.cpp
-        Interface.hpp
-        GUI.cpp
-        HumanPlayer.cpp
-        HumanPlayer.hpp
-        AIPlayer.cpp
-        AIPlayer.hpp
-        GUI.hpp
+        main.cpp
+        Jucator.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -82,11 +60,6 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME}
-    sfml-graphics
-    sfml-window
-    sfml-system
-)
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
