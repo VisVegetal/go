@@ -51,6 +51,17 @@ include(cmake/CopyHelper.cmake)
 add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
         Jucator.hpp
+        Jucator.cpp
+        Joc.hpp
+        Joc.cpp
+        GoExceptions.hpp
+        Culoare.hpp
+        "Pozitie.hpp"
+        Tabla.cpp
+        Tabla.hpp
+        Mutare.hpp
+        Reguli.cpp
+        Reguli.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
