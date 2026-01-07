@@ -4,7 +4,6 @@
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
 #include <vector>
-#include <ostream>
 
 class Tabla {
 private:
@@ -15,11 +14,10 @@ public:
     explicit Tabla(Dimensiuni dim);
 
     void Plaseazapiatra(const Pozitie& p, Culoare c);
-    void ScoatePiatra(const Pozitie& p);
-    bool esteGol(const Pozitie& p) const;
+    [[nodiscard]] bool esteGol(const Pozitie& p) const;
 
-    unsigned int getMarime() const;
-    Culoare getPozitieCuloare(const Pozitie& p) const;
+    [[nodiscard]]unsigned int getMarime() const;
+    [[nodiscard]]Culoare getPozitieCuloare(const Pozitie& p) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Tabla& t);
 };

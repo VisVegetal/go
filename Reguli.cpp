@@ -8,11 +8,17 @@ Reguli::Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi
       dimensiuneTabla(dim),
       passConsecutive(pass_) {}
 
-bool Reguli::getSfarsitJoc() const {return sfarsitJoc;}
+bool Reguli::getSfarsitJoc() const {
+    return sfarsitJoc;
+}
 
-float Reguli::getKomi() const {return komi;}
+float Reguli::getKomi() const {
+    return komi;
+}
 
-unsigned int Reguli::getPassConsecutive() const {return passConsecutive;}
+unsigned int Reguli::getPassConsecutive() const {
+    return passConsecutive;
+}
 
 void Reguli::setSfarsitJoc(bool stare) {
     sfarsitJoc = stare;
@@ -20,19 +26,18 @@ void Reguli::setSfarsitJoc(bool stare) {
 
 void Reguli::incrementPass() {
     passConsecutive++;
-    if (passConsecutive >= 2)
+    if (passConsecutive >= 2) {
         sfarsitJoc = true;
+    }
 }
 
 void Reguli::resetPass() {
     passConsecutive = 0;
 }
 
-bool Reguli::esteMutareValida(const Tabla &tabla, const Mutare &mutare) const {
-    if (sfarsitJoc)
-        return false;
-    if (mutare.isPass())
-        return true;
+bool Reguli::esteMutareValida(const Tabla& tabla, const Mutare& mutare) const {
+    if (sfarsitJoc) return false;
+    if (mutare.isPass()) return true;
 
     Pozitie p = mutare.getPozitie();
     return tabla.esteGol(p);

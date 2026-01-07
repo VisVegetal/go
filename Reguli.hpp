@@ -17,15 +17,16 @@ private:
 public:
     Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dim, unsigned int pass_);
 
-    bool getSfarsitJoc() const;
-    float getKomi() const;
-    unsigned int getPassConsecutive() const;
+
+    [[nodiscard]]bool getSfarsitJoc() const;
+    [[nodiscard]]float getKomi() const;
+    [[nodiscard]]unsigned int getPassConsecutive() const;
 
     void setSfarsitJoc(bool stare);
     void incrementPass();
     void resetPass();
 
-    bool esteMutareValida(const Tabla& tabla, const Mutare& mutare) const;
+    [[nodiscard]]bool esteMutareValida(const Tabla& tabla, const Mutare& mutare) const;
 };
 
 #endif

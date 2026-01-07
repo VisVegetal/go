@@ -2,29 +2,21 @@
 #define MUTARE_HPP
 
 #include "Pozitie.hpp"
-#include <iostream>
+#include "Culoare.hpp"
 
-enum class tipM {plasasre, pass};
 
 class Mutare {
 private:
     Pozitie pozitie;
-    tipM tip_m;
+    tipM tip;
 
 public:
-    Mutare(Pozitie p, tipM t) : pozitie (p), tip_m(t) {}
-
-    bool isPass() const {return tip_m == tipM::pass;}
-    Pozitie getPozitie() const {return pozitie;}
-    tipM getTip() const {return tip_m;}
-
-    friend std::ostream& operator<<(std::ostream& os, const Mutare& m) {
-        if (m.tip_m == tipM::pass)
-            os << "PASS";
-        else
-            os << "PLASEAZA la " << m.pozitie;
-        return os;
-
+    Mutare(Pozitie p, tipM t) : pozitie (p), tip(t) {}
+    [[nodiscard]]bool isPass() const {
+        return tip == tipM::pass;
+    }
+    [[nodiscard]]Pozitie getPozitie() const {
+        return pozitie;
     }
 };
 #endif

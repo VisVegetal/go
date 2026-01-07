@@ -1,5 +1,4 @@
 #include "Tabla.hpp"
-#include <iostream>
 
 Tabla::Tabla(Dimensiuni dim) : dimensiune(dim) {
     unsigned int n = getMarime();
@@ -14,45 +13,24 @@ unsigned int Tabla::getMarime() const {
 
 bool Tabla::esteGol(const Pozitie &p) const {
     unsigned int n = getMarime();
-    if (p.x < n && p.y < n)
-        return grila[p.x][p.y] == Culoare::Gol;
-    return false;
+    return (p.x < n && p.y < n && grila[p.x][p.y] == Culoare::Gol);
 }
 
 void Tabla::Plaseazapiatra(const Pozitie& p, Culoare c) {
-    unsigned int n = getMarime();
-    if (p.x < n && p.y < n)
-        grila[p.x][p.y] = c;
+    grila[p.x][p.y] = c;
 }
 
-void Tabla::ScoatePiatra(const Pozitie &p) {
-    unsigned int n = getMarime();
-    if (p.x < n && p.y < n)
-        grila[p.x][p.y] = Culoare::Gol;
-}
 
 Culoare Tabla::getPozitieCuloare(const Pozitie& p) const {
-    unsigned int n = getMarime();
-    if (p.x < n && p.y < n)
-        return grila[p.x][p.y];
-    return Culoare::Gol;
+    return grila[p.x][p.y];
 }
 
 std::ostream& operator<<(std::ostream& os, const Tabla& t) {
     unsigned int n = t.getMarime();
-    os << "   ";
-    for (unsigned int i = 0; i < n; ++i)
-        os << i % 10 << " ";
-    os << std::endl;
-
     for (unsigned int i = 0; i < n; ++i) {
-        os << i % 10 << " ";
         for (unsigned int j = 0; j < n; ++j) {
-            switch (t.grila[i][j]) {
-                case Culoare::Negru: os << "N "; break;
-                case Culoare::Alb:   os << "A "; break;
-                case Culoare::Gol:   os << ". "; break;
-            }
+            if (t.grila[i][j] == Culoare::Gol) os << ". ";
+            else os << (t.grila[i][j] == Culoare::Negru ? "N " : "A ");
         }
         os << "\n";
     }

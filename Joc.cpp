@@ -1,39 +1,26 @@
-#include "GoExceptions.hpp"
 #include "Joc.hpp"
+#include "GoExceptions.hpp"
 #include <algorithm>
-#include <iostream>
 
-int Joc::numarPartideIncepute;
+int Joc::numarPartideIncepute = 0;
 
-Joc::Joc(Dimensiuni dim, Jucator* jn, Jucator* ja, float komi)
-    : tabla(dim), jucatorNegru(jn), jucatorAlb(ja),
-      culoareTurn(Culoare::Negru), reguli (false, true, false, komi, dim, 0) {
-
-    if (jn == nullptr || ja == nullptr)
-        throw GoException("Constructor Joc: Jucatorii nu pot fi nuli!");
-
+Joc::Joc(Dimensiuni dim, Jucator* n, Jucator* a)
+    : tabla(dim), negru(n), alb(a), turn(Culoare::Negru) {
+    if(!n || !a) throw GoException("Jucatori invalidi!");
     numarPartideIncepute++;
 }
 
-Joc::Joc(const Joc& other)
-    : tabla(other.tabla),
-      jucatorNegru(other.jucatorNegru->clone()),
-      jucatorAlb(other.jucatorAlb->clone()),
-      culoareTurn(other.culoareTurn),
-      reguli(other.reguli) {}
+Joc::~Joc() { delete negru; delete alb; }
 
-Joc::~Joc() {
-    delete jucatorAlb;
-    delete jucatorNegru;
-}
+Joc::Joc(const Joc& other)
+    : tabla(other.tabla), negru(other.negru->clone()), alb(other.alb->clone()), turn(other.turn) {}
 
 void swap(Joc& first, Joc& second) noexcept {
     using std::swap;
     swap(first.tabla, second.tabla);
-    swap(first.jucatorNegru, second.jucatorNegru);
-    swap(first.jucatorAlb, second.jucatorAlb);
-    swap(first.culoareTurn, second.culoareTurn);
-    swap(first.reguli, second.reguli);
+    swap(first.negru, second.negru);
+    swap(first.alb, second.alb);
+    swap(first.turn, second.turn);
 }
 
 Joc& Joc::operator=(Joc other) {
@@ -41,63 +28,39 @@ Joc& Joc::operator=(Joc other) {
     return *this;
 }
 
-void Joc::afiseazaTipJucatori() const {
-    std::cout << "Componenta partidei:\n";
+int Joc::getStatisticaJocuri() { return numarPartideIncepute; }
 
-    if (dynamic_cast<JucatorBot*>(jucatorNegru))
-        std::cout << "- Jucatorul Negru (" << jucatorNegru->getNume() << ") este un Bot.\n";
-    else
-        std::cout << "- Jucatorul Negru (" << jucatorNegru->getNume() << ") este un Om.\n";
-
-
-    if (dynamic_cast<JucatorBot*>(jucatorAlb))
-        std::cout << "- Jucatorul Alb (" << jucatorAlb->getNume() << ") este un Bot.\n";
-    else
-        std::cout << "- Jucatorul Alb (" << jucatorAlb->getNume() << ") este un Om.\n";
-
-}
-
-bool Joc::aplicaMutare(const Mutare &m) {
-    if (reguli.getSfarsitJoc())
-        throw MutareIlegalaException("Jocul s-a terminat deja!");
-
+bool Joc::aplicaMutare(const Mutare& m) {
     if (m.isPass()) {
-        std::cout << "Jocul a pasat.\n";
-        reguli.incrementPass();
         return true;
     }
 
     Pozitie p = m.getPozitie();
+    unsigned int marime = tabla.getMarime();
 
-    if (p.x >= tabla.getMarime() || p.y >= tabla.getMarime())
-        throw CoordonateInvalideException(p.x, p.y);
+    if (p.x >= marime || p.y >= marime) {
+        throw CoordonateInvalideException(static_cast<int>(p.x), static_cast<int>(p.y));
+    }
 
-    if (!tabla.esteGol(p))
-        throw MutareIlegalaException("Pozitia este deja ocupata.");
+    if (!tabla.esteGol(p)) {
+        throw MutareIlegalaException("Loc ocupat!");
+    }
 
-    tabla.Plaseazapiatra(p, culoareTurn);
-    reguli.resetPass();
+    tabla.Plaseazapiatra(p, turn);
 
-    return true;
+    return (tabla.getPozitieCuloare(p) == turn);
 }
 
 void Joc::joaca() {
-    afiseazaTipJucatori();
-
-    while (!reguli.getSfarsitJoc()) {
+    for(size_t i = 0; i < 5; ++i) {
         try {
-            std::cout << "\n" << tabla;
-            Jucator* curent = (culoareTurn == Culoare::Negru) ? jucatorNegru : jucatorAlb;
-
-            Mutare m = curent -> alegeMutare(tabla);
-
-            if (aplicaMutare(m))
-                culoareTurn = (culoareTurn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
-
-        }catch (const GoException& e) {
-            std::cout << "\n EROARE JOC: " <<e.what()<< "Incearca din nou.\n";
+            std::cout << tabla;
+            Jucator* curent = (turn == Culoare::Negru) ? negru : alb;
+            if (aplicaMutare(curent->alegeMutare(tabla))) {
+                turn = (turn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
+            }
+        } catch (const GoException& e) {
+            std::cout << e.what() << " Reincearca!\n";
         }
     }
-
-    std::cout << "\nPartida s-a incheiat!\n";
 }
