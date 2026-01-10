@@ -13,7 +13,6 @@ int main() {
     if (!(std::getline(std::cin, numeJucator)) || numeJucator.empty()) {
         numeJucator = "Jucator1";
     }
-
     //initializare fereastra sfml
     //rezolutie + titlu fereastra
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Go Game - OOP Project");

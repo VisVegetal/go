@@ -21,7 +21,7 @@ include(cmake/CopyHelper.cmake)
 
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
 set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
-set(SFML_BUILD_AUDIO TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
 # Disable OpenGL-dependent modules on Linux CI
@@ -75,8 +75,13 @@ set_compiler_flags(
 
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
         sfml-system
-        sfml-audio
 )
+
+if(SFML_BUILD_AUDIO)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
+            sfml-audio
+    )
+endif()
 
 # Graphics only where available
 if(NOT (UNIX AND NOT APPLE))
