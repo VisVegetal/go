@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
@@ -27,7 +29,6 @@ set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
 include(FetchContent)
-
 FetchContent_Declare(
         sfml
         GIT_REPOSITORY https://github.com/SFML/SFML.git
@@ -43,6 +44,11 @@ FetchContent_Declare(
 
 #
 FetchContent_MakeAvailable(sfml)
+
+if(UNIX AND NOT APPLE)
+    find_package(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+endif()
 
 ###############################################################################
 
