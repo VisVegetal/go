@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <memory> // Adaugat pentru std::unique_ptr (rezolva erorile de memorie)
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
 
@@ -25,9 +26,12 @@ int main() {
         return -1;
     }
 
-    //alocare jucatori
-    Jucator* j1 = new JucatorUman(numeJucator, Culoare::Negru);
-    Jucator* j2 = new JucatorBot("AlphaGo", Culoare::Alb);
+    auto j1_ptr = std::make_unique<JucatorUman>(numeJucator, Culoare::Negru);
+    auto j2_ptr = std::make_unique<JucatorBot>("AlphaGo", Culoare::Alb);
+
+    Jucator* j1 = j1_ptr.get();
+    Jucator* j2 = j2_ptr.get();
+
     Joc partida(Dimensiuni::D9x9, j1, j2);
 
     //User Interface
@@ -55,7 +59,7 @@ int main() {
 
     sf::Text msgText("", font, 20);
     msgText.setPosition(650.0f, 450.0f);
-    
+
     //game loop
     while (window.isOpen()) {
         sf::Event event{};
@@ -86,11 +90,11 @@ int main() {
                             // Rezolvare: Mutat in inner scope pentru Clang-Tidy
                             constexpr float cellSize = 40.0f;
                             constexpr float offset = 50.0f;
-                            
+
                             //convertire coordonate pixeli in coordonate grila
                             auto col = static_cast<unsigned int>((mPos.x - offset + 20.0f) / cellSize);
                             auto row = static_cast<unsigned int>((mPos.y - offset + 20.0f) / cellSize);
-                            
+
                             //executarea mutarii
                             if (row < 9 && col < 9) {
                                 // Daca mutarea e ilegala, catch-ul va prinde exceptia si botul nu va muta.
@@ -134,7 +138,7 @@ int main() {
         //randare
         window.clear(sf::Color(104, 75, 75));
         partida.getTabla().draw(window);
-        
+
         //desenare elemente UI
         window.draw(passBtn);
         window.draw(exitBtn);
@@ -151,9 +155,5 @@ int main() {
             bot->exportaStatistici();
         }
     }
-
-    delete j1;
-    delete j2;
-
     return 0;
 }
