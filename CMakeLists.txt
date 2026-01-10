@@ -17,23 +17,15 @@ include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
 ###############################################################################
-# Detect CI environment
-if(DEFINED ENV{GITHUB_ACTIONS})
-    set(IS_CI TRUE)
-else()
-    set(IS_CI FALSE)
-endif()
-
-###############################################################################
 # SFML configuration
 
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
 set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
-set(SFML_BUILD_AUDIO TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
-# SFML modules: disable graphics/window on CI
-if(IS_CI)
+# Disable OpenGL-dependent modules on Linux CI
+if(UNIX AND NOT APPLE)
     set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
     set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
 else()
@@ -91,8 +83,8 @@ if(SFML_BUILD_AUDIO)
     )
 endif()
 
-# Graphics/window only if enabled (not on CI)
-if(SFML_BUILD_GRAPHICS)
+# Graphics only where available
+if(NOT (UNIX AND NOT APPLE))
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
             sfml-graphics
             sfml-window
