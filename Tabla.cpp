@@ -1,38 +1,63 @@
 #include "Tabla.hpp"
 
-Tabla::Tabla(Dimensiuni dim) : dimensiune(dim) {
-    unsigned int n = getMarime();
-    grila.resize(n, std::vector<Culoare>(n, Culoare::Gol));
+//initializarea tablei
+Tabla::Tabla(Dimensiuni d) : marime(static_cast<unsigned int>(d)) {
+    grila.resize(marime, std::vector<Culoare>(marime, Culoare::Gol));
 }
+//randare grafica
+void Tabla::draw(sf::RenderWindow& window) const {
+    constexpr float cellSize = 40.0f;
+    constexpr float offset = 50.0f;
+    constexpr float stoneRadius = 18.0f;
+    sf::Color culoareGrid = sf::Color::White;
 
-unsigned int Tabla::getMarime() const {
-    if (dimensiune == Dimensiuni::D9x9) return 9;
-    if (dimensiune == Dimensiuni::D13x13) return 13;
-    return 19;
-}
+    //desen grid
+    for (unsigned int i = 0; i < marime; ++i) {
+        sf::Vertex hLine[] = {
+            sf::Vertex(sf::Vector2f(offset, offset + static_cast<float>(i) * cellSize), culoareGrid),
+            sf::Vertex(sf::Vector2f(offset + static_cast<float>(marime - 1) * cellSize, offset + static_cast<float>(i) * cellSize), culoareGrid)
+        };
+        window.draw(hLine, 2, sf::Lines);
 
-bool Tabla::esteGol(const Pozitie &p) const {
-    unsigned int n = getMarime();
-    return (p.x < n && p.y < n && grila[p.x][p.y] == Culoare::Gol);
-}
-
-void Tabla::Plaseazapiatra(const Pozitie& p, Culoare c) {
-    grila[p.x][p.y] = c;
-}
-
-
-Culoare Tabla::getPozitieCuloare(const Pozitie& p) const {
-    return grila[p.x][p.y];
-}
-
-std::ostream& operator<<(std::ostream& os, const Tabla& t) {
-    unsigned int n = t.getMarime();
-    for (unsigned int i = 0; i < n; ++i) {
-        for (unsigned int j = 0; j < n; ++j) {
-            if (t.grila[i][j] == Culoare::Gol) os << ". ";
-            else os << (t.grila[i][j] == Culoare::Negru ? "N " : "A ");
-        }
-        os << "\n";
+        // Linii verticale cu culoare specificată
+        sf::Vertex vLine[] = {
+            sf::Vertex(sf::Vector2f(offset + static_cast<float>(i) * cellSize, offset), culoareGrid),
+            sf::Vertex(sf::Vector2f(offset + static_cast<float>(i) * cellSize, offset + static_cast<float>(marime - 1) * cellSize), culoareGrid)
+        };
+        window.draw(vLine, 2, sf::Lines);
     }
-    return os;
+
+    //desen pietre
+    sf::CircleShape piesa(stoneRadius);
+    piesa.setOrigin(stoneRadius, stoneRadius);
+    for (unsigned int i = 0; i < marime; ++i) {
+        for (unsigned int j = 0; j < marime; ++j) {
+            if (grila[i][j] != Culoare::Gol) {
+                piesa.setPosition(offset + static_cast<float>(j) * cellSize, offset + static_cast<float>(i) * cellSize);
+                piesa.setFillColor(grila[i][j] == Culoare::Negru ? sf::Color::Black : sf::Color::White);
+                piesa.setOutlineThickness(1.5f);
+                piesa.setOutlineColor(sf::Color(100, 100, 100));
+                window.draw(piesa);
+            }
+        }
+    }
+}
+
+bool Tabla::esteGol(Pozitie p) const {
+    return p.x < marime && p.y < marime && grila[p.x][p.y] == Culoare::Gol;
+}
+void Tabla::Plaseazapiatra(Pozitie p, Culoare c) {
+    if (p.x < marime && p.y < marime) grila[p.x][p.y] = c;
+}
+Culoare Tabla::getPozitieCuloare(Pozitie p) const {
+    return (p.x < marime && p.y < marime) ? grila[p.x][p.y] : Culoare::Gol;
+}
+unsigned int Tabla::getMarime() const {
+    return marime;
+}
+const std::vector<std::vector<Culoare>>& Tabla::getGrila() const {
+    return grila;
+}
+void Tabla::setGrila(const std::vector<std::vector<Culoare>>& g) {
+    grila = g;
 }

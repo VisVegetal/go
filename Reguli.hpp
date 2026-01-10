@@ -1,32 +1,19 @@
 #ifndef REGULI_HPP
 #define REGULI_HPP
 
-#include "Culoare.hpp"
 #include "Mutare.hpp"
 #include "Tabla.hpp"
 
 class Reguli {
 private:
-    bool permiteSuicid;
-    bool regulaKo;
     bool sfarsitJoc;
-    float komi;
-    Dimensiuni dimensiuneTabla;
-    unsigned int passConsecutive;
-
+    unsigned int passConsecutive; // contorizarea pass-urilor (la 2 pass-uri consecutive se opreste jocul)
 public:
-    Reguli(bool permiteSuicid_, bool regulaKo_, bool sfarsitJoc_, float komi_, Dimensiuni dim, unsigned int pass_);
-
-
+    Reguli();
     [[nodiscard]]bool getSfarsitJoc() const;
-    [[nodiscard]]float getKomi() const;
-    [[nodiscard]]unsigned int getPassConsecutive() const;
-
-    void setSfarsitJoc(bool stare);
     void incrementPass();
     void resetPass();
-
-    [[nodiscard]]bool esteMutareValida(const Tabla& tabla, const Mutare& mutare) const;
+    [[nodiscard]] bool esteMutareValida(const Tabla& t, const Mutare& m) const;
 };
 
 #endif

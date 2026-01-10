@@ -19,10 +19,20 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
-###############################################################################
+set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
+set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_AUDIO TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
-# external dependencies with FetchContent
-# include(FetchContent)
+include(FetchContent)
+
+FetchContent_Declare(
+        sfml
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.1
+)
 #
 # set(FETCHCONTENT_QUIET OFF)
 # set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
@@ -30,14 +40,9 @@ include(cmake/CopyHelper.cmake)
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
 #         - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#         SomeLib
-#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-# )
+
 #
-# FetchContent_MakeAvailable(SomeLib)
+FetchContent_MakeAvailable(sfml)
 
 ###############################################################################
 
@@ -62,6 +67,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Mutare.hpp
         Reguli.cpp
         Reguli.hpp
+        Culoare.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -73,6 +79,17 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
 ###############################################################################
 
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
+        sfml-graphics
+        sfml-window
+        sfml-system
+        sfml-audio
+        opengl32
+        winmm
+        gdi32
+)
+
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${sfml_SOURCE_DIR}/include)
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
