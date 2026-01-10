@@ -67,13 +67,12 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Joc.cpp
         GoExceptions.hpp
         Culoare.hpp
-        "Pozitie.hpp"
+        Pozitie.hpp
         Tabla.cpp
         Tabla.hpp
         Mutare.hpp
         Reguli.cpp
         Reguli.hpp
-        Culoare.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
