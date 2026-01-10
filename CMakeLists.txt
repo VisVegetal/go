@@ -45,11 +45,6 @@ FetchContent_Declare(
 #
 FetchContent_MakeAvailable(sfml)
 
-if(UNIX AND NOT APPLE)
-    find_package(OpenGL REQUIRED)
-    find_package(X11 REQUIRED)
-endif()
-
 ###############################################################################
 
 # external dependencies with find_package
@@ -89,10 +84,16 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
         sfml-window
         sfml-system
         sfml-audio
-        opengl32
-        winmm
-        gdi32
 )
+
+if(WIN32)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
+            opengl32
+            winmm
+            gdi32
+    )
+endif()
+
 
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${sfml_SOURCE_DIR}/include)
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
