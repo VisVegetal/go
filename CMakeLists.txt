@@ -18,19 +18,23 @@ include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
 # =========================================
-# Detectare platforma și SFML
+# Detectare platforma
 # =========================================
 if(APPLE)
-    # Folosim clang++ pe macOS (Intel sau ARM)
+    # Folosim clang++ pe macOS
     set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
 endif()
 
-# AddressSanitizer
-if(CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address")
+# =========================================
+# Configurare SFML
+# =========================================
+# Dezactivăm AddressSanitizer pe Windows
+if((CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address") AND NOT WIN32)
     message(STATUS "AddressSanitizer detected: building SFML shared and using dynamic stdlib")
     set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS FALSE CACHE BOOL "" FORCE)
 else()
+    # Folosim SFML static + runtime consistent
     set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
 endif()
@@ -39,12 +43,11 @@ endif()
 set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
-# Graphics & Window
+# Graphics & Window modules
 if(WIN32 OR APPLE)
     set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
     set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
 else()
-    # Linux headless CI / server
     set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
     set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
 endif()
@@ -79,11 +82,13 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Reguli.hpp
 )
 
-# Enable sanitizers
-set_compiler_flags(
-        RUN_SANITIZERS TRUE
-        TARGET_NAMES ${MAIN_EXECUTABLE_NAME}
-)
+# Enable sanitizers (doar pe non-Windows)
+if(NOT WIN32)
+    set_compiler_flags(
+            RUN_SANITIZERS TRUE
+            TARGET_NAMES ${MAIN_EXECUTABLE_NAME}
+    )
+endif()
 
 # =========================================
 # Link SFML libraries
