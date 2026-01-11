@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "Reguli.hpp"
 #include "Tabla.hpp"
 #include "Jucator.hpp"
 
@@ -12,6 +13,7 @@ private:
     Tabla tabla;
     Jucator *negru, *alb;
     Culoare turn;//indica cine urmeaza sa mute
+    Reguli reguli;
 
     //matrice pentru salvarea configuratiei precedente, folosita pentru aplicarea regulii KO
     std::vector<std::vector<Culoare>> stareAnterioara;

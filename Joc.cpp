@@ -64,8 +64,18 @@ Joc::~Joc() = default;
 
 //se face o mutare conform regulilor + tratarea mutarilor invalide
 void Joc::aplicaMutare(const Mutare& m) {
+    if (!reguli.esteMutareValida(tabla, m)) {
+        throw MutareIlegalaException("Mutare invalida conform regulilor!");
+    }
     //pass
     if (m.isPass()) {
+        reguli.incrementPass();
+
+        // Dacă s-au dat 2 pass-uri consecutive, jocul se termină
+        if (reguli.getSfarsitJoc()) {
+            this->terminaJoc();
+        }
+
         turn = (turn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
         return;
     }
@@ -73,6 +83,8 @@ void Joc::aplicaMutare(const Mutare& m) {
     if (!tabla.esteGol(m.getPozitie())) {
         throw MutareIlegalaException("Pozitia este deja ocupata!");
     }
+
+    reguli.resetPass();
 
     const auto grilaInainte = tabla.getGrila();
     tabla.Plaseazapiatra(m.getPozitie(), turn);
