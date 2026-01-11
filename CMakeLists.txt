@@ -21,8 +21,21 @@ include(cmake/CopyHelper.cmake)
 # Detectare platforma
 # =========================================
 if(APPLE)
-    # Folosim clang++ pe macOS
-    set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
+    # prefer system clang; fall back to finding clang on PATH
+    if(NOT DEFINED CMAKE_OBJC_COMPILER OR CMAKE_OBJC_COMPILER STREQUAL "")
+        find_program(_APPLE_CLANG clang HINTS /usr/bin /usr/local/bin /opt/homebrew/bin)
+        if(NOT _APPLE_CLANG)
+            find_program(_APPLE_CLANG clang)
+        endif()
+        if(_APPLE_CLANG)
+            message(STATUS "Forcing Objective-C compiler to Apple clang: ${_APPLE_CLANG}")
+            set(CMAKE_OBJC_COMPILER "${_APPLE_CLANG}" CACHE FILEPATH "Objective-C compiler" FORCE)
+            # clang driver also handles ObjC++
+            set(CMAKE_OBJCXX_COMPILER "${_APPLE_CLANG}" CACHE FILEPATH "Objective-C++ compiler" FORCE)
+        else()
+            message(WARNING "Apple clang not found; Objective-C files may fail to compile with GCC.")
+        endif()
+    endif()
 endif()
 
 # =========================================
