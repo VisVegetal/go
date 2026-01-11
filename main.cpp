@@ -34,7 +34,7 @@ static int ruleazaSmokeTestHeadless() {
 #endif
 
 #ifndef GO_HEADLESS
-static Dimensiuni alegeDimensiuneGUI(sf::Font& font) {
+[[maybe_unused]]static Dimensiuni alegeDimensiuneGUI(sf::Font& font) {
     sf::RenderWindow menu(sf::VideoMode(520, 320), "Alege dimensiunea tablei");
     menu.setFramerateLimit(60);
 
