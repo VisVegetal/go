@@ -105,6 +105,7 @@ int main() {
     return ruleazaSmokeTestHeadless();
 #endif
 
+#ifndef GO_HEADLESS
     //initializare jucator uman
     std::string numeJucator = "JucatorUman";
 
@@ -253,4 +254,5 @@ int main() {
         }
     }
     return 0;
+#endif
 }
