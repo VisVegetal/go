@@ -20,6 +20,16 @@ include(cmake/CopyHelper.cmake)
 # =========================================
 # Detectare platforma
 # =========================================
+if(APPLE)
+    message(STATUS "Configuring for macOS – forcing Apple Clang")
+
+    set(CMAKE_C_COMPILER clang CACHE STRING "" FORCE)
+    set(CMAKE_CXX_COMPILER clang++ CACHE STRING "" FORCE)
+    set(CMAKE_OBJC_COMPILER clang CACHE STRING "" FORCE)
+    set(CMAKE_OBJCXX_COMPILER clang++ CACHE STRING "" FORCE)
+endif()
+
+
 
 # =========================================
 # Configurare SFML
@@ -62,9 +72,8 @@ FetchContent_Declare(
         GIT_TAG 2.6.1
 )
 
-if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(WARNING "macOS + GCC detected: disabling SFML joystick support")
-    set(SFML_JOYSTICK FALSE CACHE BOOL "" FORCE)
+if(APPLE AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(STATUS "macOS + non-GNU compiler detected")
 endif()
 
 
