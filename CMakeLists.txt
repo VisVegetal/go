@@ -59,7 +59,7 @@ if(DEFINED ENV{GITHUB_ACTIONS})
 else()
     # Pe calculatorul tau cu Linux (daca ai avea), ramane activ
     set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
-    set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
+    set(SFML_BUILD_WINDOW TRUE CACHE BO6OL "" FORCE)
 endif()
 else()
     set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
