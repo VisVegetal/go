@@ -90,6 +90,11 @@ if(NOT WIN32)
     )
 endif()
 
+if(DEFINED ENV{GITHUB_ACTIONS})
+    add_definitions(-DCH_CI_RUN)
+    message(STATUS "Configuring for GitHub Actions - UI tests will be bypassed")
+endif()
+
 # =========================================
 # Link SFML libraries
 # =========================================
