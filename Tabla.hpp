@@ -9,18 +9,27 @@
 #include <SFML/Graphics.hpp>
 #endif
 
+// struct pentru layout-ul tablei (pozitie + dimensiuni)
+struct LayoutTabla {
+    float cellSize{};
+    float offsetX{};
+    float offsetY{};
+};
+
 class Tabla {
 private:
     std::vector<std::vector<Culoare>> grila;
     unsigned int marime; // dimensiune tabla
+    LayoutTabla layout;  // layout grafic (IMPORTANT)
 
 public:
     explicit Tabla(Dimensiuni d);
 
 #if !defined(GO_HEADLESS) && !defined(NO_GRAPHICS)
-    //tabla de joc si pietrele
+    // tabla de joc si pietrele
     void draw(sf::RenderWindow& window) const;
 #endif
+
 
     [[nodiscard]] bool esteGol(Pozitie p) const;
     [[nodiscard]] Culoare getPozitieCuloare(Pozitie p) const;

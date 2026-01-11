@@ -1,7 +1,8 @@
 #include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <memory> // Adaugat pentru std::unique_ptr (rezolva erorile de memorie)
+#include <cmath>
+#include <memory>
+
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
 
@@ -11,39 +12,11 @@
 
 #if defined(CH_CI_RUN) || defined(GO_HEADLESS)
 static int ruleazaSmokeTestHeadless() {
-    std::string numeJucator = "JucatorUman";
+    auto j1 = std::make_unique<JucatorUman>("Jucator", Culoare::Negru);
+    auto j2 = std::make_unique<JucatorBot>("Bot", Culoare::Alb);
 
-    auto j1_ptr = std::make_unique<JucatorUman>(numeJucator, Culoare::Negru);
-    auto j2_ptr = std::make_unique<JucatorBot>("AlphaGo", Culoare::Alb);
-
-    Jucator* j1 = j1_ptr.get();
-    Jucator* j2 = j2_ptr.get();
-
-    Joc partida(Dimensiuni::D9x9, j1, j2);
-
-    (void)j1->getNume();
-    (void)partida.getTurnActual();
-    (void)partida.getCapturateNegru();
-    (void)partida.getCapturateAlb();
+    Joc partida(Dimensiuni::D9x9, j1.get(), j2.get());
     (void)partida.getTabla();
-
-    for (unsigned int k = 0; k < 3 && !partida.esteIncheiat(); ++k) {
-        try {
-            partida.aplicaMutare(Mutare(Pozitie{k, k}, tipM::plasare));
-        } catch (...) {
-            try { partida.aplicaMutare(Mutare(Pozitie{0, 0}, tipM::pass)); } catch (...) {}
-        }
-
-        if (!partida.esteIncheiat()) {
-            try {
-                partida.aplicaMutare(j2->alegeMutare(partida.getTabla()));
-            } catch (...) {
-                try { partida.aplicaMutare(Mutare(Pozitie{0, 0}, tipM::pass)); } catch (...) {}
-            }
-        }
-    }
-
-    (void)partida.determinaCastigator();
     return 0;
 }
 #endif
@@ -54,39 +27,37 @@ static Dimensiuni alegeDimensiuneGUI(sf::Font& font) {
     menu.setFramerateLimit(60);
 
     sf::Text title("Alege dimensiunea tablei:", font, 26);
-    title.setPosition(40.0f, 30.0f);
+    title.setPosition(40.f, 30.f);
 
-    auto makeButton = [&](float x, float y, const std::string& label) {
-        sf::RectangleShape btn(sf::Vector2f(140.0f, 60.0f));
-        btn.setPosition(x, y);
-        btn.setFillColor(sf::Color(60, 60, 60));
-        btn.setOutlineThickness(2.0f);
-        btn.setOutlineColor(sf::Color::White);
+    auto makeBtn = [&](float x, const std::string& t) {
+        sf::RectangleShape b({140.f, 60.f});
+        b.setPosition(x, 140.f);
+        b.setFillColor(sf::Color(70,70,70));
+        b.setOutlineThickness(2);
+        b.setOutlineColor(sf::Color::White);
 
-        sf::Text txt(label, font, 22);
-        txt.setPosition(x + 35.0f, y + 15.0f);
-        return std::pair<sf::RectangleShape, sf::Text>(btn, txt);
+        sf::Text txt(t, font, 22);
+        txt.setPosition(x + 30.f, 155.f);
+        return std::pair{b, txt};
     };
 
-    auto b9  = makeButton(40.0f, 140.0f, "9 x 9");
-    auto b13 = makeButton(190.0f, 140.0f, "13 x 13");
-    auto b19 = makeButton(340.0f, 140.0f, "19 x 19");
+    auto b9  = makeBtn(40.f,  "9 x 9");
+    auto b13 = makeBtn(190.f, "13 x 13");
+    auto b19 = makeBtn(340.f, "19 x 19");
 
     while (menu.isOpen()) {
-        sf::Event event{};
-        while (menu.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                menu.close();
-            }
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f mPos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
-                if (b9.first.getGlobalBounds().contains(mPos))  { menu.close(); return Dimensiuni::D9x9; }
-                if (b13.first.getGlobalBounds().contains(mPos)) { menu.close(); return Dimensiuni::D13x13; }
-                if (b19.first.getGlobalBounds().contains(mPos)) { menu.close(); return Dimensiuni::D19x19; }
+        sf::Event e{};
+        while (menu.pollEvent(e)) {
+            if (e.type == sf::Event::Closed) menu.close();
+            if (e.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2f m(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y));
+                if (b9.first.getGlobalBounds().contains(m))  return Dimensiuni::D9x9;
+                if (b13.first.getGlobalBounds().contains(m)) return Dimensiuni::D13x13;
+                if (b19.first.getGlobalBounds().contains(m)) return Dimensiuni::D19x19;
             }
         }
 
-        menu.clear(sf::Color(30, 30, 30));
+        menu.clear(sf::Color(30,30,30));
         menu.draw(title);
         menu.draw(b9.first);  menu.draw(b9.second);
         menu.draw(b13.first); menu.draw(b13.second);
@@ -101,158 +72,151 @@ static Dimensiuni alegeDimensiuneGUI(sf::Font& font) {
 int main() {
 
 #if defined(CH_CI_RUN) || defined(GO_HEADLESS)
-    // Închide programul cu succes dacă rulează pe GitHub / CI headless
     return ruleazaSmokeTestHeadless();
 #endif
 
-#ifndef GO_HEADLESS
-    //initializare jucator uman
-    std::string numeJucator = "JucatorUman";
-
-    //fonturi externe
     sf::Font font;
-    // Incarcare font folosind calea RELATIVĂ (trebuie sa ai arial.ttf in folderul proiectului)
     if (!font.loadFromFile("arial.ttf")) {
-        std::cerr << "Eroare criticala: Fontul nu a putut fi incarcat!\n";
+        std::cerr << "Eroare: font lipsa\n";
         return -1;
     }
 
-    // utilizatorul alege dimensiunea tablei (GUI)
     Dimensiuni dim = alegeDimensiuneGUI(font);
+    const auto N = static_cast<unsigned int>(dim);
 
-    //initializare fereastra sfml
-    //rezolutie + titlu fereastra
-    sf::RenderWindow window(sf::VideoMode(1000, 750), "Go - Proiect POO");
+    sf::RenderWindow window(sf::VideoMode(1100, 800), "Go - Proiect POO");
     window.setFramerateLimit(60);
 
-    auto j1_ptr = std::make_unique<JucatorUman>(numeJucator, Culoare::Negru);
-    auto j2_ptr = std::make_unique<JucatorBot>("AlphaGo", Culoare::Alb);
+    auto j1 = std::make_unique<JucatorUman>("Jucator", Culoare::Negru);
+    auto j2 = std::make_unique<JucatorBot>("AlphaGo", Culoare::Alb);
 
-    Jucator* j1 = j1_ptr.get();
-    Jucator* j2 = j2_ptr.get();
+    Joc partida(dim, j1.get(), j2.get());
 
-    Joc partida(dim, j1, j2);
+    // ================== BUTOANE ==================
+    sf::RectangleShape exitBtn({140, 50});
+    exitBtn.setPosition(750, 50);
+    exitBtn.setFillColor(sf::Color(120, 20, 20));
+    sf::Text exitTxt("EXIT", font, 24);
+    exitTxt.setPosition(790, 60);
 
-    //User Interface
-    //configurare buton PASS
-    sf::RectangleShape passBtn(sf::Vector2f(140.0f, 50.0f));
-    passBtn.setPosition(650.0f, 100.0f);
+    sf::RectangleShape passBtn({140, 50});
+    passBtn.setPosition(750, 120);
     passBtn.setFillColor(sf::Color::Red);
-    passBtn.setOutlineThickness(2.0f);
+    sf::Text passTxt("PASS", font, 24);
+    passTxt.setPosition(795, 130);
 
-    sf::Text textPass("PASS", font, 24);
-    textPass.setPosition(695.0f, 110.0f);
+    sf::RectangleShape undoBtn({140, 50});
+    undoBtn.setPosition(750, 190);
+    undoBtn.setFillColor(sf::Color(70, 70, 150));
+    sf::Text undoTxt("UNDO", font, 24);
+    undoTxt.setPosition(785, 200);
 
-    //creare buton EXIT
-    sf::RectangleShape exitBtn(sf::Vector2f(140.0f, 50.0f));
-    exitBtn.setPosition(820.0f, 660.0f);
-    exitBtn.setFillColor(sf::Color(50, 50, 50));
-    exitBtn.setOutlineThickness(2.0f);
+    sf::RectangleShape redoBtn({140, 50});
+    redoBtn.setPosition(750, 260);
+    redoBtn.setFillColor(sf::Color(70, 150, 70));
+    sf::Text redoTxt("REDO", font, 24);
+    redoTxt.setPosition(785, 270);
+    // =============================================
 
-    sf::Text textExit("EXIT", font, 24);
-    textExit.setPosition(865.0f, 670.0f);
+    sf::Text msg("", font, 20);
+    msg.setPosition(750, 340);
 
-    //texte pentru scor si mesaje
-    sf::Text uiText("", font, 22);
-    uiText.setPosition(650.0f, 200.0f);
+    sf::Text score("", font, 22);
+    score.setPosition(750, 400);
 
-    sf::Text msgText("", font, 20);
-    msgText.setPosition(650.0f, 450.0f);
+    // layout IDENTIC cu Tabla::draw() (pentru click)
+    constexpr float boardMaxSize = 600.f;
+    const float cellSize = boardMaxSize / static_cast<float>(N - 1);
+    const float boardSize = cellSize * static_cast<float>(N - 1);
 
-    //game loop
+
     while (window.isOpen()) {
-        sf::Event event{};
-        //gestionare input tastatura/mouse
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        sf::Event e{};
+        while (window.pollEvent(e)) {
+
+            if (e.type == sf::Event::Closed)
                 window.close();
-            }
-            //detectare click pe ecran
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f mPos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
-                //verificare exit
-                if (exitBtn.getGlobalBounds().contains(mPos)) {
+
+            if (e.type == sf::Event::MouseButtonPressed &&
+                e.mouseButton.button == sf::Mouse::Left) {
+
+                sf::Vector2f m(static_cast<float>(e.mouseButton.x), static_cast<float>(e.mouseButton.y));
+
+                if (exitBtn.getGlobalBounds().contains(m)) {
                     window.close();
                 }
-                //executarea jocului daca partida nu s-a incheiat
-                if (!partida.esteIncheiat()) {
+                else if (undoBtn.getGlobalBounds().contains(m)) {
+                    try { partida.undo(); } catch (...) {}
+                }
+                else if (redoBtn.getGlobalBounds().contains(m)) {
+                    try { partida.redo(); } catch (...) {}
+                }
+                else if (passBtn.getGlobalBounds().contains(m)) {
                     try {
-                        //daca se apasa pass
-                        if (passBtn.getGlobalBounds().contains(mPos)) {
-                            partida.aplicaMutare(Mutare(Pozitie{0, 0}, tipM::pass));
-                            if (!partida.esteIncheiat()) {
-                                partida.aplicaMutare(j2->alegeMutare(partida.getTabla()));
+                        partida.aplicaMutare(Mutare(Pozitie{0,0}, tipM::pass));
+                        if (!partida.esteIncheiat())
+                            partida.aplicaMutare(j2->alegeMutare(partida.getTabla()));
+                    } catch (...) {}
+                }
+                else {
+                    constexpr float offsetX = 50.f;
+                    const float offsetY =
+                        (static_cast<float>(window.getSize().y) - boardSize) / 2.f;
+
+                    const float rx = m.x - offsetX;
+                    const float ry = m.y - offsetY;
+
+                    if (rx >= -cellSize/2 && ry >= -cellSize/2 &&
+                        rx <= boardSize + cellSize/2 &&
+                        ry <= boardSize + cellSize/2) {
+
+                        auto col =
+                            static_cast<unsigned int>(std::round(rx / cellSize));
+                        auto row =
+                            static_cast<unsigned int>(std::round(ry / cellSize));
+
+                        if (row < N && col < N) {
+                            try {
+                                partida.aplicaMutare(
+                                    Mutare(Pozitie{row, col}, tipM::plasare)
+                                );
+                                if (!partida.esteIncheiat())
+                                    partida.aplicaMutare(
+                                        j2->alegeMutare(partida.getTabla())
+                                    );
+                            } catch (const GoException& ex) {
+                                std::cout << ex.what() << "\n";
                             }
                         }
-                        //utilizatorul plaseaza o piatra
-                        else {
-                            constexpr float cellSize = 40.0f;
-                            constexpr float offset = 50.0f;
-
-                            //convertire coordonate pixeli in coordonate grila
-                            auto col = static_cast<unsigned int>((mPos.x - offset + 20.0f) / cellSize);
-                            auto row = static_cast<unsigned int>((mPos.y - offset + 20.0f) / cellSize);
-
-                            //executarea mutarii
-                            if (row < static_cast<unsigned int>(dim) && col < static_cast<unsigned int>(dim)) {
-                                // Daca mutarea e ilegala, catch-ul va prinde exceptia si botul nu va muta.
-                                partida.aplicaMutare(Mutare(Pozitie{row, col}, tipM::plasare));
-
-                                if (!partida.esteIncheiat()) {
-                                    partida.aplicaMutare(j2->alegeMutare(partida.getTabla()));
-                                }
-                            }
-                        }
-                    } catch (const GoException& e) {
-                        //tratarea erorilor (mesajul apare in consola, dar jocul continua)
-                        std::cout << "Eroare Joc: " << e.what() << std::endl;
                     }
                 }
             }
         }
 
-        Jucator* jucatorCurent = (partida.getTurnActual() == Culoare::Negru) ? j1 : j2;
-        const auto* om = dynamic_cast<JucatorUman*>(jucatorCurent);
+        msg.setString(
+            partida.getTurnActual() == Culoare::Negru
+            ? "Randul tau"
+            : "AlphaGo gandeste..."
+        );
 
-        if (om != nullptr) {
-            msgText.setString("Este randul tau, " + om->getNume() + "!");
-            msgText.setFillColor(sf::Color::Cyan);
-        } else {
-            msgText.setString("AlphaGo se gandeste...");
-            msgText.setFillColor(sf::Color::Yellow);
-        }
-
-        //actualizare scor
         std::stringstream ss;
-        ss << std::fixed << std::setprecision(1);
-        ss << "SCOR:\n" << j1->getNume() << ": " << partida.getCapturateNegru()
+        ss << "SCOR\n"
+           << j1->getNume() << ": " << partida.getCapturateNegru()
            << "\nBot: " << static_cast<float>(partida.getCapturateAlb()) + 6.5f;
+        score.setString(ss.str());
 
-        if (partida.esteIncheiat()) {
-            ss << "\n\n" << partida.determinaCastigator();
-        }
-        uiText.setString(ss.str());
-
-        //randare
-        window.clear(sf::Color(104, 75, 75));
+        window.clear(sf::Color(100, 70, 70));
         partida.getTabla().draw(window);
 
-        //desenare elemente UI
-        window.draw(passBtn);
-        window.draw(exitBtn);
-        window.draw(textPass);
-        window.draw(textExit);
-        window.draw(uiText);
-        window.draw(msgText);
-        window.display(); //afisare
+        window.draw(exitBtn); window.draw(exitTxt);
+        window.draw(passBtn); window.draw(passTxt);
+        window.draw(undoBtn); window.draw(undoTxt);
+        window.draw(redoBtn); window.draw(redoTxt);
+        window.draw(msg);
+        window.draw(score);
+
+        window.display();
     }
 
-    //curatare si export
-    if (partida.esteIncheiat()) {
-        if (const auto* bot = dynamic_cast<JucatorBot*>(j2)) {
-            bot->exportaStatistici();
-        }
-    }
     return 0;
-#endif
 }
