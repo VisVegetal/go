@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.26)
 
+# =========================================
+# Proiect
+# =========================================
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
@@ -18,6 +21,7 @@ include(cmake/CopyHelper.cmake)
 # Detectare platforma
 # =========================================
 if(APPLE)
+    # Folosim clang++ pe macOS
     set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
 endif()
 
@@ -26,19 +30,30 @@ endif()
 # =========================================
 # Dezactivăm AddressSanitizer pe Windows
 if((CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address") AND NOT WIN32)
-    message(STATUS "AddressSanitizer detected: building SFML shared")
+    message(STATUS "AddressSanitizer detected: building SFML shared and using dynamic stdlib")
     set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS FALSE CACHE BOOL "" FORCE)
 else()
+    # Folosim SFML static + runtime consistent
     set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
 endif()
 
-# ACTIVĂM modulele necesare pentru toate platformele
-set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
-set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
+# SFML modules
 set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
+###asta
+set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
+set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
+
+# Graphics & Window modules
+if(WIN32 OR APPLE)
+    set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
+    set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
+else()
+    set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
+    set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
+endif()
 
 # =========================================
 # Fetch SFML
@@ -56,22 +71,47 @@ FetchContent_MakeAvailable(sfml)
 # =========================================
 add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
-        Jucator.hpp Jucator.cpp
-        Joc.hpp Joc.cpp
+        Jucator.hpp
+        Jucator.cpp
+        Joc.hpp
+        Joc.cpp
         GoExceptions.hpp
         Culoare.hpp
         Pozitie.hpp
-        Tabla.cpp Tabla.hpp
+        Tabla.cpp
+        Tabla.hpp
         Mutare.hpp
-        Reguli.cpp Reguli.hpp
+        Reguli.cpp
+        Reguli.hpp
 )
 
-# =========================================
-# Link SFML libraries (IMPORTANT)
-# =========================================
-# Pe Linux/Ubuntu, avem nevoie de sfml-graphics care depinde de window și system
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
+# Enable sanitizers (doar pe non-Windows)
+if(NOT WIN32)
+    set_compiler_flags(
+            RUN_SANITIZERS TRUE
+            TARGET_NAMES ${MAIN_EXECUTABLE_NAME}
+    )
+endif()
 
+if(DEFINED ENV{GITHUB_ACTIONS})
+    add_definitions(-DCH_CI_RUN)
+    message(STATUS "Configuring for GitHub Actions - UI tests will be bypassed")
+endif()
+
+# =========================================
+# Link SFML libraries
+# =========================================
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-system)
+
+if(SFML_BUILD_AUDIO)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-audio)
+endif()
+
+if(SFML_BUILD_GRAPHICS)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window)
+endif()
+
+# Windows system libraries
 if(WIN32)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE opengl32 winmm gdi32)
 endif()
@@ -82,10 +122,12 @@ endif()
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${sfml_SOURCE_DIR}/include)
 
 # =========================================
-# Sanitizers & Resources
+# Install & copy resources
 # =========================================
-if(NOT WIN32)
-    set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
+
+if(APPLE)
+    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
 copy_files(
