@@ -128,7 +128,7 @@ if(APPLE)
 endif()
 
 copy_files(
-        FILES tastatura.txt
+        FILES tastatura.txt arial.ttf
         COPY_TO_DESTINATION
         TARGET_NAME ${MAIN_EXECUTABLE_NAME}
 )

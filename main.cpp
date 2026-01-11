@@ -7,6 +7,11 @@
 #include "GoExceptions.hpp"
 
 int main() {
+
+#ifdef CH_CI_RUN
+    std::cout << "CI detected: Skipping GUI initialization..." << std::endl;
+    return 0;
+#endif
     //initializare jucator uman
     std::string numeJucator = "JucatorUman";
     //initializare fereastra sfml
