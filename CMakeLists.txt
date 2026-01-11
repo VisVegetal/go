@@ -6,8 +6,12 @@ set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
 project(${MAIN_PROJECT_NAME})
 
+
 if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_compile_options(-include dispatch/dispatch.h)
+    add_compile_options(
+            -fblocks
+            -include dispatch/dispatch.h
+    )
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
