@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.26)
 
+# =========================================
+# Proiect
+# =========================================
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
@@ -14,7 +17,9 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
-
+# =========================================
+# Detectare platforma
+# =========================================
 if(APPLE)
     # Folosim clang++ pe macOS
     set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
@@ -39,7 +44,7 @@ set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
 # Graphics & Window modules
-if(WIN32 OR APPLE OR UNIX)
+if(WIN32 OR APPLE)
     set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
     set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
 else()
