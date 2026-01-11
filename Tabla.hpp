@@ -2,7 +2,6 @@
 #define TABLA_HPP
 
 #include <vector>
-#include <ostream>
 #include <SFML/Graphics.hpp>
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
