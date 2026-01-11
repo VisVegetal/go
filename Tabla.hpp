@@ -1,10 +1,13 @@
 #ifndef TABLA_HPP
 #define TABLA_HPP
 
-#include <SFML/Graphics.hpp>
 #include <vector>
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
+
+#ifndef NO_GRAPHICS
+#include <SFML/Graphics.hpp>
+#endif
 
 class Tabla {
 private:
@@ -13,8 +16,12 @@ private:
 
 public:
     explicit Tabla(Dimensiuni d);
+#ifndef NO_GRAPHICS
     //tabla de joc si pietrele
     void draw(sf::RenderWindow& window) const;
+#else
+    void draw(int dummy) const;
+#endif
 
     [[nodiscard]] bool esteGol(Pozitie p) const;
 

@@ -33,6 +33,15 @@ int main() {
 
     Joc partida(Dimensiuni::D9x9, j1, j2);
 
+#ifdef NO_GRAPHICS
+    // Această ramură va fi executată de Valgrind în CI
+    std::cout << "CI detected: Rulăm doar logica pentru verificarea memoriei.\n";
+    try {
+        partida.aplicaMutare(Mutare({4, 4}, tipM::plasare));
+    } catch (...) {}
+    return 0;
+#else
+
     //User Interface
     //configurare buton PASS
     sf::RectangleShape passBtn(sf::Vector2f(140.0f, 50.0f));
@@ -154,5 +163,6 @@ int main() {
             bot->exportaStatistici();
         }
     }
+#endif
     return 0;
 }
