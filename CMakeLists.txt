@@ -21,22 +21,14 @@ include(cmake/CopyHelper.cmake)
 # Detectare platforma
 # =========================================
 if(APPLE)
-    # prefer system clang; fall back to finding clang on PATH
-    if(NOT DEFINED CMAKE_OBJC_COMPILER OR CMAKE_OBJC_COMPILER STREQUAL "")
-        find_program(_APPLE_CLANG clang HINTS /usr/bin /usr/local/bin /opt/homebrew/bin)
-        if(NOT _APPLE_CLANG)
-            find_program(_APPLE_CLANG clang)
-        endif()
-        if(_APPLE_CLANG)
-            message(STATUS "Forcing Objective-C compiler to Apple clang: ${_APPLE_CLANG}")
-            set(CMAKE_OBJC_COMPILER "${_APPLE_CLANG}" CACHE FILEPATH "Objective-C compiler" FORCE)
-            # clang driver also handles ObjC++
-            set(CMAKE_OBJCXX_COMPILER "${_APPLE_CLANG}" CACHE FILEPATH "Objective-C++ compiler" FORCE)
-        else()
-            message(WARNING "Apple clang not found; Objective-C files may fail to compile with GCC.")
-        endif()
-    endif()
+    message(STATUS "Configuring for macOS – forcing Apple Clang")
+
+    set(CMAKE_C_COMPILER clang CACHE STRING "" FORCE)
+    set(CMAKE_CXX_COMPILER clang++ CACHE STRING "" FORCE)
+    set(CMAKE_OBJC_COMPILER clang CACHE STRING "" FORCE)
+    set(CMAKE_OBJCXX_COMPILER clang++ CACHE STRING "" FORCE)
 endif()
+
 
 
 # =========================================
@@ -80,10 +72,6 @@ FetchContent_Declare(
         GIT_TAG 2.6.1
 )
 
-if(APPLE)
-    message(STATUS "Fixing dispatch_block_t error for macOS build")
-    add_compile_options("-include" "dispatch/dispatch.h")
-endif()
 
 FetchContent_MakeAvailable(sfml)
 
