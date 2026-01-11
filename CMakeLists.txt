@@ -16,11 +16,18 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
+
 ###############################################################################
 # SFML configuration
+if(CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address")
+    message(STATUS "AddressSanitizer detected: building SFML shared and using dynamic stdlib")
+    set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
+    set(SFML_USE_STATIC_STD_LIBS FALSE CACHE BOOL "" FORCE)
+else()
+    set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
+    set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
+endif()
 
-set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
-set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
 set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
