@@ -127,7 +127,13 @@ endif()
 # =========================================
 # Link SFML libraries
 # =========================================
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-system)
+target_link_libraries(${MAIN_EXECUTABLE_NAME}
+        PRIVATE
+        sfml-graphics
+        sfml-window
+        sfml-system
+)
+
 
 if(SFML_BUILD_AUDIO)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-audio)
