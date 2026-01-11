@@ -38,6 +38,7 @@ if(APPLE)
     endif()
 endif()
 
+
 # =========================================
 # Configurare SFML
 # =========================================
@@ -68,6 +69,7 @@ else()
     set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
 endif()
 
+
 # =========================================
 # Fetch SFML
 # =========================================
@@ -77,6 +79,12 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.1
 )
+
+if(APPLE)
+    # Forțăm includerea dispatch.h pentru a defini dispatch_block_t
+    add_compile_options("-include" "dispatch/dispatch.h")
+endif()
+
 FetchContent_MakeAvailable(sfml)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
