@@ -43,9 +43,10 @@ void Tabla::draw(sf::RenderWindow& window) const {
         }
     }
 #else
-    (void)window;
+    if (&window == nullptr) return;
 #endif
 }
+
 bool Tabla::esteGol(Pozitie p) const {
     return p.x < marime && p.y < marime && grila[p.x][p.y] == Culoare::Gol;
 }
