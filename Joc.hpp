@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <optional>   // NEW
 #include "Reguli.hpp"
 #include "Tabla.hpp"
 #include "Jucator.hpp"
@@ -26,6 +27,23 @@ private:
     bool jocIncheiat = false;
     float komi = 6.5f; // bonus de puncte pentru jucatorul cu piesele albe
 
+    //undo/redo snapshots
+    struct Snapshot {
+        std::vector<std::vector<Culoare>> grila;
+        std::vector<std::vector<Culoare>> stareKo;
+        Culoare turn;
+        int captN;
+        int captA;
+        bool jocIncheiat;
+        bool reguliSfarsit;
+        unsigned int reguliPass;
+    };
+
+    std::vector<Snapshot> istoric;
+    std::size_t istoricIndex = 0;
+
+    void salveazaSnapshot(); // NEW
+
 public:
     //configurarea partidei initiale
     Joc(Dimensiuni dim, Jucator* n, Jucator* a);
@@ -38,7 +56,6 @@ public:
     [[nodiscard]] bool esteIncheiat() const { return jocIncheiat; }
     void terminaJoc() { jocIncheiat = true; }//oprirea fortata a jocului
 
-    //
     [[nodiscard]] int getCapturateNegru() const { return capturateNegru; }
     [[nodiscard]] int getCapturateAlb() const { return capturateAlb; }
     [[nodiscard]] const Tabla& getTabla() const { return tabla; } // returneaza o referinta constanta catre tabla pentru randare eficienta
@@ -46,6 +63,15 @@ public:
     [[nodiscard]] std::string determinaCastigator() const; //scor final (puncte+komi)
 
     void verificaCapturi(Pozitie p);//verifica daca s-a efectuat o captura prin inconjurarea unei piese
+
+    // undo/redo
+    [[nodiscard]] bool poateUndo() const { return istoricIndex > 0; }
+    [[nodiscard]] bool poateRedo() const { return istoricIndex + 1 < istoric.size(); }
+    void undo();
+    void redo();
+
+    // hint mutare
+    [[nodiscard]] std::optional<Pozitie> sugereazaMutare() const;
 };
 
 #endif

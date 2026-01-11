@@ -1,8 +1,10 @@
+// Joc.cpp
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
 #include <set>
 #include <iomanip>
 #include <sstream>
+#include <optional>
 
 //initializarea membrului static
 int Joc::numarPartideIncepute = 0;
@@ -53,14 +55,123 @@ static bool areLibertati(const Tabla& t, const std::set<Pozitie>& grup) {
     return false;
 }
 
+static int distManhattan(Pozitie a, Pozitie b) {
+    return static_cast<int>(a.x > b.x ? a.x - b.x : b.x - a.x)
+         + static_cast<int>(a.y > b.y ? a.y - b.y : b.y - a.y);
+}
+
 //initializare componente joc
 Joc::Joc(Dimensiuni dim, Jucator* n, Jucator* a)
     : tabla(dim), negru(n), alb(a), turn(Culoare::Negru) {
     numarPartideIncepute++;
     stareAnterioara = tabla.getGrila();
+
+    istoric.clear();
+    istoricIndex = 0;
+    salveazaSnapshot();
 }
 
 Joc::~Joc() = default;
+
+void Joc::salveazaSnapshot() {
+    Snapshot s;
+    s.grila = tabla.getGrila();
+    s.stareKo = stareAnterioara;
+    s.turn = turn;
+    s.captN = capturateNegru;
+    s.captA = capturateAlb;
+    s.jocIncheiat = jocIncheiat;
+    s.reguliSfarsit = reguli.getSfarsitJoc();
+    s.reguliPass = reguli.getPassConsecutive();
+
+    if (istoricIndex + 1 < istoric.size()) {
+        istoric.erase(istoric.begin() + static_cast<long>(istoricIndex + 1), istoric.end());
+    }
+    istoric.push_back(std::move(s));
+    istoricIndex = istoric.size() - 1;
+}
+
+void Joc::undo() {
+    if (!poateUndo()) return;
+    istoricIndex--;
+
+    const auto& s = istoric[istoricIndex];
+    tabla.setGrila(s.grila);
+    stareAnterioara = s.stareKo;
+    turn = s.turn;
+    capturateNegru = s.captN;
+    capturateAlb = s.captA;
+    jocIncheiat = s.jocIncheiat;
+    reguli.setState(s.reguliSfarsit, s.reguliPass);
+}
+
+void Joc::redo() {
+    if (!poateRedo()) return;
+    istoricIndex++;
+
+    const auto& s = istoric[istoricIndex];
+    tabla.setGrila(s.grila);
+    stareAnterioara = s.stareKo;
+    turn = s.turn;
+    capturateNegru = s.captN;
+    capturateAlb = s.captA;
+    jocIncheiat = s.jocIncheiat;
+    reguli.setState(s.reguliSfarsit, s.reguliPass);
+}
+
+std::optional<Pozitie> Joc::sugereazaMutare() const {
+    if (jocIncheiat) return std::nullopt;
+
+    const auto n = tabla.getMarime();
+    const auto adversar = (turn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
+    const Pozitie centru{n / 2, n / 2};
+
+    int bestCapt = -1;
+    int bestDist = 1'000'000;
+    std::optional<Pozitie> best = std::nullopt;
+
+    for (unsigned int x = 0; x < n; ++x) {
+        for (unsigned int y = 0; y < n; ++y) {
+            Pozitie p{x, y};
+            if (!tabla.esteGol(p)) continue;
+
+            Mutare m(p, tipM::plasare);
+            if (!reguli.esteMutareValida(tabla, m)) continue;
+
+            Tabla tmp = tabla;
+            tmp.Plaseazapiatra(p, turn);
+
+            int capt = 0;
+            for (int i = 0; i < 4; ++i) {
+                constexpr int dx[] = {-1, 1, 0, 0};
+                constexpr int dy[] = {0, 0, -1, 1};
+
+                int nx = static_cast<int>(p.x) + dx[i];
+                int ny = static_cast<int>(p.y) + dy[i];
+                if (nx < 0 || ny < 0 || nx >= static_cast<int>(n) || ny >= static_cast<int>(n)) continue;
+
+                Pozitie v{static_cast<unsigned int>(nx), static_cast<unsigned int>(ny)};
+                if (tmp.getPozitieCuloare(v) != adversar) continue;
+
+                std::set<Pozitie> grupAdvers;
+                gasesteGrup(tmp, v, adversar, grupAdvers);
+                if (!areLibertati(tmp, grupAdvers)) {
+                    capt += static_cast<int>(grupAdvers.size());
+                }
+            }
+
+            const int d = distManhattan(p, centru);
+
+            if (capt > bestCapt || (capt == bestCapt && d < bestDist)) {
+                bestCapt = capt;
+                bestDist = d;
+                best = p;
+            }
+        }
+    }
+
+    return best;
+}
 
 //se face o mutare conform regulilor + tratarea mutarilor invalide
 void Joc::aplicaMutare(const Mutare& m) {
@@ -77,6 +188,7 @@ void Joc::aplicaMutare(const Mutare& m) {
         }
 
         turn = (turn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
+        salveazaSnapshot();
         return;
     }
     //loc ocupat
@@ -98,6 +210,7 @@ void Joc::aplicaMutare(const Mutare& m) {
 
     stareAnterioara = grilaInainte;
     turn = (turn == Culoare::Negru) ? Culoare::Alb : Culoare::Negru;
+    salveazaSnapshot();
 }
 
 //se verifica vecinii

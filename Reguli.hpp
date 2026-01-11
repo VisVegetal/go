@@ -10,10 +10,13 @@ private:
     unsigned int passConsecutive; // contorizarea pass-urilor (la 2 pass-uri consecutive se opreste jocul)
 public:
     Reguli();
-    [[nodiscard]]bool getSfarsitJoc() const;
+    [[nodiscard]] bool getSfarsitJoc() const;
     void incrementPass();
     void resetPass();
     [[nodiscard]] bool esteMutareValida(const Tabla& t, const Mutare& m) const;
+
+    [[nodiscard]] unsigned int getPassConsecutive() const { return passConsecutive; }
+    void setState(bool sfarsit, unsigned int passuri) { sfarsitJoc = sfarsit; passConsecutive = passuri; }
 };
 
 #endif
