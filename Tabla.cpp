@@ -5,6 +5,8 @@ Tabla::Tabla(Dimensiuni d) : marime(static_cast<unsigned int>(d)) {
     grila.resize(marime, std::vector<Culoare>(marime, Culoare::Gol));
 }
 
+#if !defined(GO_HEADLESS) && !defined(NO_GRAPHICS)
+
 //randare grafica
 void Tabla::draw(sf::RenderWindow& window) const {
     constexpr float cellSize = 40.0f;
@@ -42,6 +44,15 @@ void Tabla::draw(sf::RenderWindow& window) const {
         }
     }
 }
+
+#else
+
+//randare grafica
+void Tabla::draw(sf::RenderWindow& /*window*/) const {
+    // headless / NO_GRAPHICS: nu desenam nimic
+}
+
+#endif
 
 bool Tabla::esteGol(Pozitie p) const {
     return p.x < marime && p.y < marime && grila[p.x][p.y] == Culoare::Gol;

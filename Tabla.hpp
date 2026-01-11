@@ -4,7 +4,12 @@
 #include <vector>
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
+
+#if !defined(GO_HEADLESS) && !defined(NO_GRAPHICS)
 #include <SFML/Graphics.hpp>
+#else
+namespace sf { class RenderWindow; } // forward declaration
+#endif
 
 class Tabla {
 private:
@@ -13,11 +18,16 @@ private:
 
 public:
     explicit Tabla(Dimensiuni d);
+
+#ifndef GO_HEADLESS
 #ifndef NO_GRAPHICS
     //tabla de joc si pietrele
     void draw(sf::RenderWindow& window) const;
 #else
-    void draw(int dummy) const;
+    void draw(sf::RenderWindow& window) const;
+#endif
+#else
+    void draw(sf::RenderWindow& window) const;
 #endif
 
     [[nodiscard]] bool esteGol(Pozitie p) const;
@@ -25,7 +35,6 @@ public:
     [[nodiscard]] Culoare getPozitieCuloare(Pozitie p) const;
 
     [[nodiscard]] unsigned int getMarime() const;
-
 
     [[nodiscard]] const std::vector<std::vector<Culoare>>& getGrila() const;
 
