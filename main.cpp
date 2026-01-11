@@ -1,4 +1,3 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -6,14 +5,23 @@
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
 
-int main() {
+// Includem SFML doar dacă nu suntem în mediul de testare (CI)
+#ifndef CH_CI_RUN
+    #include <SFML/Graphics.hpp>
+#endif
 
-#ifdef CH_CI_RUN
+int main() {
+    // --- LOGICĂ PENTRU GITHUB ACTIONS (Headless Mode) ---
+    // Verificăm dacă rulăm în GitHub Actions pentru a evita erorile de OpenGL
+    #ifdef CH_CI_RUN
     std::cout << "CI detected: Skipping GUI initialization..." << std::endl;
     return 0;
-#endif
+    #endif
+    // ----------------------------------------------------
+
     //initializare jucator uman
     std::string numeJucator = "JucatorUman";
+
     //initializare fereastra sfml
     //rezolutie + titlu fereastra
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Go - Proiect POO");
@@ -21,7 +29,8 @@ int main() {
 
     //fonturi externe
     sf::Font font;
-    if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+    // Incarcare font folosind calea RELATIVĂ (trebuie sa ai arial.ttf in folderul proiectului)
+    if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Eroare criticala: Fontul nu a putut fi incarcat!\n";
         return -1;
     }
