@@ -4,10 +4,7 @@
 #include <vector>
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
-
-#ifndef NO_GRAPHICS
 #include <SFML/Graphics.hpp>
-#endif
 
 class Tabla {
 private:

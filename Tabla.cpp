@@ -5,7 +5,6 @@ Tabla::Tabla(Dimensiuni d) : marime(static_cast<unsigned int>(d)) {
     grila.resize(marime, std::vector<Culoare>(marime, Culoare::Gol));
 }
 
-#ifndef NO_GRAPHICS
 //randare grafica
 void Tabla::draw(sf::RenderWindow& window) const {
     constexpr float cellSize = 40.0f;
@@ -43,11 +42,6 @@ void Tabla::draw(sf::RenderWindow& window) const {
         }
     }
 }
-#else
-void Tabla::draw([[maybe_unused]] int dummy) const {
-    // Nu facem nimic pe CI
-}
-#endif
 
 bool Tabla::esteGol(Pozitie p) const {
     return p.x < marime && p.y < marime && grila[p.x][p.y] == Culoare::Gol;
