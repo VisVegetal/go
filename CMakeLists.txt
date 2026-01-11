@@ -92,8 +92,7 @@ if(SFML_BUILD_AUDIO)
     )
 endif()
 
-# Graphics only where available
-if(NOT (UNIX AND NOT APPLE))
+if(SFML_BUILD_GRAPHICS)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
             sfml-graphics
             sfml-window
