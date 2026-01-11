@@ -72,10 +72,6 @@ FetchContent_Declare(
         GIT_TAG 2.6.1
 )
 
-if(APPLE AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(STATUS "macOS + non-GNU compiler detected")
-endif()
-
 
 FetchContent_MakeAvailable(sfml)
 
