@@ -30,25 +30,44 @@ if(APPLE)
 endif()
 
 # =========================================
+# Headless mode (pentru CI Linux)
+#   - pe GitHub Actions Ubuntu nu ai OpenGL dev libs
+#   - deci construim fara SFML Window/Graphics ca sa treaca configure/build
+# =========================================
+option(GO_HEADLESS "Build without SFML window/graphics" OFF)
+
+if(DEFINED ENV{GITHUB_ACTIONS} AND UNIX AND NOT APPLE)
+    set(GO_HEADLESS ON CACHE BOOL "" FORCE)
+endif()
+
+if(GO_HEADLESS)
+    message(STATUS "GO_HEADLESS=ON (SFML window/graphics disabled)")
+endif()
+
+# =========================================
 # Configurare SFML
 # =========================================
-# Dacă rulezi cu ASan pe non-Windows: e mai sigur să construiești SFML shared
-# (evită probleme cu runtime / allocator)
+# ASan pe non-Windows: e mai sigur shared + stdlib dinamic
 if((CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address") AND NOT WIN32)
     message(STATUS "AddressSanitizer detected: building SFML shared and using dynamic stdlib")
     set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS FALSE CACHE BOOL "" FORCE)
 else()
-    # SFML static + runtime consistent
     set(BUILD_SHARED_LIBS FALSE CACHE BOOL "" FORCE)
     set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
 endif()
 
-# Modulele SFML folosite de proiect
+# Module SFML
 set(SFML_BUILD_AUDIO   FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
-set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
-set(SFML_BUILD_WINDOW   TRUE CACHE BOOL "" FORCE)
+
+if(GO_HEADLESS)
+    set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "" FORCE)
+    set(SFML_BUILD_WINDOW   FALSE CACHE BOOL "" FORCE)
+else()
+    set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
+    set(SFML_BUILD_WINDOW   TRUE CACHE BOOL "" FORCE)
+endif()
 
 # =========================================
 # Fetch SFML
@@ -109,13 +128,14 @@ if(DEFINED ENV{GITHUB_ACTIONS})
 endif()
 
 # =========================================
-# Link SFML libraries (o singură dată)
+# Link SFML (conditionat)
 # =========================================
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
-        sfml-graphics
-        sfml-window
-        sfml-system
-)
+if(GO_HEADLESS)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-system)
+    target_compile_definitions(${MAIN_EXECUTABLE_NAME} PRIVATE GO_HEADLESS=1)
+else()
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window sfml-system)
+endif()
 
 # Windows system libraries
 if(WIN32)
@@ -125,9 +145,7 @@ endif()
 # =========================================
 # Include directories
 # =========================================
-target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE
-        ${sfml_SOURCE_DIR}/include
-)
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${sfml_SOURCE_DIR}/include)
 
 # =========================================
 # Install & copy resources

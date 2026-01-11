@@ -4,17 +4,23 @@
 #include <memory> // Adaugat pentru std::unique_ptr (rezolva erorile de memorie)
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
+
+#ifndef GO_HEADLESS
 #include <SFML/Graphics.hpp>
+#endif
 
 
 int main() {
-#ifdef CH_CI_RUN
-    return 0; // Închide programul cu succes dacă rulează pe GitHub
+
+#if defined(CH_CI_RUN) || defined(GO_HEADLESS)
+    // Închide programul cu succes dacă rulează pe GitHub / CI headless
+    return 0;
 #endif
 
     //initializare jucator uman
     std::string numeJucator = "JucatorUman";
 
+#ifndef GO_HEADLESS
     //initializare fereastra sfml
     //rezolutie + titlu fereastra
     sf::RenderWindow window(sf::VideoMode(1000, 750), "Go - Proiect POO");
@@ -27,6 +33,7 @@ int main() {
         std::cerr << "Eroare criticala: Fontul nu a putut fi incarcat!\n";
         return -1;
     }
+#endif
 
     auto j1_ptr = std::make_unique<JucatorUman>(numeJucator, Culoare::Negru);
     auto j2_ptr = std::make_unique<JucatorBot>("AlphaGo", Culoare::Alb);
@@ -36,7 +43,7 @@ int main() {
 
     Joc partida(Dimensiuni::D9x9, j1, j2);
 
-
+#ifndef GO_HEADLESS
     //User Interface
     //configurare buton PASS
     sf::RectangleShape passBtn(sf::Vector2f(140.0f, 50.0f));
@@ -90,7 +97,6 @@ int main() {
                         }
                         //utilizatorul plaseaza o piatra
                         else {
-                            // Rezolvare: Mutat in inner scope pentru Clang-Tidy
                             constexpr float cellSize = 40.0f;
                             constexpr float offset = 50.0f;
 
@@ -151,6 +157,7 @@ int main() {
         window.draw(msgText);
         window.display(); //afisare
     }
+#endif
 
     //curatare si export
     if (partida.esteIncheiat()) {
@@ -158,5 +165,6 @@ int main() {
             bot->exportaStatistici();
         }
     }
+
     return 0;
 }
