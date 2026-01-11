@@ -60,14 +60,6 @@ set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
 set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
 
-# Graphics & Window modules
-if(WIN32 OR APPLE)
-    set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
-    set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
-else()
-    set(SFML_BUILD_GRAPHICS OFF CACHE BOOL "" FORCE)
-    set(SFML_BUILD_WINDOW OFF CACHE BOOL "" FORCE)
-endif()
 
 
 # =========================================
@@ -81,7 +73,7 @@ FetchContent_Declare(
 )
 
 if(APPLE)
-    # Forțăm includerea dispatch.h pentru a defini dispatch_block_t
+    message(STATUS "Fixing dispatch_block_t error for macOS build")
     add_compile_options("-include" "dispatch/dispatch.h")
 endif()
 
