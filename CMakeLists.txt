@@ -6,6 +6,10 @@ set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
 project(${MAIN_PROJECT_NAME})
 
+if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-include dispatch/dispatch.h)
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -71,11 +75,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Reguli.hpp
 )
 
-if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(${MAIN_EXECUTABLE_NAME} PRIVATE
-            -include dispatch/dispatch.h
-    )
-endif()
 
 # Enable sanitizers on CI
 set_compiler_flags(
