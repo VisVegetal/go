@@ -20,8 +20,12 @@ include(cmake/CopyHelper.cmake)
 # =========================================
 # Detectare platforma și SFML
 # =========================================
+if(APPLE)
+    # Folosim clang++ pe macOS (Intel sau ARM)
+    set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "C++ compiler" FORCE)
+endif()
 
-# Sanitizers
+# AddressSanitizer
 if(CMAKE_CXX_FLAGS MATCHES "-fsanitize=address" OR CMAKE_C_FLAGS MATCHES "-fsanitize=address")
     message(STATUS "AddressSanitizer detected: building SFML shared and using dynamic stdlib")
     set(BUILD_SHARED_LIBS TRUE CACHE BOOL "" FORCE)
@@ -31,6 +35,7 @@ else()
     set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
 endif()
 
+# SFML modules
 set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
