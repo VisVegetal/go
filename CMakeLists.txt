@@ -20,16 +20,6 @@ include(cmake/CopyHelper.cmake)
 # =========================================
 # Detectare platforma
 # =========================================
-if(APPLE)
-    message(STATUS "Configuring for macOS – forcing Apple Clang")
-
-    set(CMAKE_C_COMPILER clang CACHE STRING "" FORCE)
-    set(CMAKE_CXX_COMPILER clang++ CACHE STRING "" FORCE)
-    set(CMAKE_OBJC_COMPILER clang CACHE STRING "" FORCE)
-    set(CMAKE_OBJCXX_COMPILER clang++ CACHE STRING "" FORCE)
-endif()
-
-
 
 # =========================================
 # Configurare SFML
@@ -71,6 +61,11 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.1
 )
+
+if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(WARNING "macOS + GCC detected: disabling SFML joystick support")
+    set(SFML_JOYSTICK FALSE CACHE BOOL "" FORCE)
+endif()
 
 
 FetchContent_MakeAvailable(sfml)
@@ -139,9 +134,6 @@ if(SFML_BUILD_AUDIO)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-audio)
 endif()
 
-if(SFML_BUILD_GRAPHICS)
-    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window)
-endif()
 
 # Windows system libraries
 if(WIN32)
