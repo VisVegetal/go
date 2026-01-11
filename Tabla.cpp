@@ -13,7 +13,7 @@ void Tabla::draw(sf::RenderWindow& window) const {
     constexpr float stoneRadius = 18.0f;
     sf::Color culoareGrid = sf::Color::White;
 
-    //desen grid
+    // desen grid
     for (unsigned int i = 0; i < marime; ++i) {
         sf::Vertex hLine[] = {
             sf::Vertex(sf::Vector2f(offset, offset + static_cast<float>(i) * cellSize), culoareGrid),
@@ -28,7 +28,7 @@ void Tabla::draw(sf::RenderWindow& window) const {
         window.draw(vLine, 2, sf::Lines);
     }
 
-    //desen pietre
+    // desen pietre
     sf::CircleShape piesa(stoneRadius);
     piesa.setOrigin(stoneRadius, stoneRadius);
     for (unsigned int i = 0; i < marime; ++i) {
@@ -43,7 +43,7 @@ void Tabla::draw(sf::RenderWindow& window) const {
         }
     }
 #else
-    if (&window == nullptr) return;
+    static_cast<void>(window);
 #endif
 }
 
