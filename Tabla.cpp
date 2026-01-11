@@ -14,11 +14,11 @@ Tabla::Tabla(Dimensiuni d)
 // randare grafica
 void Tabla::draw(sf::RenderWindow& window) const {
 
-    // ================== LAYOUT INTERN ==================
+    //layout intern
     // dimensiunea maxima a tablei (fixa, coerenta)
     constexpr float boardMaxSize = 600.f;
 
-    // distanta intre linii (IMPORTANT: marime - 1)
+    // distanta intre linii (marime - 1)
     const float cellSize = boardMaxSize / static_cast<float>(marime - 1);
     const float boardSize = cellSize * static_cast<float>(marime - 1);
 
@@ -28,7 +28,6 @@ void Tabla::draw(sf::RenderWindow& window) const {
         (static_cast<float>(window.getSize().y) - boardSize) / 2.f;
 
     const float stoneRadius = cellSize * 0.45f;
-    // ===================================================
 
     sf::Color culoareGrid = sf::Color::White;
 

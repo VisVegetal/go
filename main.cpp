@@ -109,7 +109,7 @@ int main() {
 
     Joc partida(dim, j1.get(), j2.get());
 
-    // ================== BUTOANE ==================
+    // butoane
     sf::RectangleShape exitBtn({140.f, 50.f});
     exitBtn.setPosition(750.f, 50.f);
     exitBtn.setFillColor(sf::Color(120, 20, 20));
@@ -213,7 +213,7 @@ int main() {
             }
         }
 
-        // ===== folosire determinaCastigator =====
+        // determinare castigator
         if (partida.esteIncheiat()) {
             msg.setString(
                 "Joc terminat!\n" +
@@ -227,7 +227,7 @@ int main() {
             );
         }
 
-        // ===== folosire sugereazaMutare =====
+        // sugerare mutare
         if (!partida.esteIncheiat() &&
             partida.getTurnActual() == Culoare::Negru) {
 
