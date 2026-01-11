@@ -11,7 +11,7 @@ public:
 
     explicit GoException(std::string m) : mesaj(std::move(m)) {}
 
-    virtual const char* what() const noexcept override {
+    [[nodiscard]] const char* what() const noexcept override {
         return mesaj.c_str();
     }
 

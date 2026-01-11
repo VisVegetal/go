@@ -32,8 +32,9 @@ public:
     using Jucator::Jucator;
     [[nodiscard]] Jucator* clone() const override { return new JucatorBot(*this); }
     Mutare alegeMutare(const Tabla& t) override;
-    [[maybe_unused]] exportaStatistici() const {
+    void exportaStatistici() const {
         std::cout << "\n[Sistem] Exportam log-urile de gandire pentru: " << nume << "...\n";
+
     }
 };
 
