@@ -66,6 +66,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(sfml)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # Ignoră eroarea de deprecation pentru char_traits (necesar pentru SFML + Clang 18)
+    add_compile_options(-Wno-error=deprecated-declarations)
+    add_compile_options(-Wno-deprecated-declarations)
+
+    # Ignoră eroarea de câmpuri nefolosite (pentru negru/alb din Joc.hpp)
+    add_compile_options(-Wno-error=unused-private-field)
+    add_compile_options(-Wno-unused-private-field)
+endif()
+
 # =========================================
 # Executabil
 # =========================================
