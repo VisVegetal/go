@@ -119,7 +119,7 @@ void Joc::redo() {
     reguli.setState(s.reguliSfarsit, s.reguliPass);
 }
 
-[[maybe_unused]]std::optional<Pozitie> Joc::sugereazaMutare() const {
+std::optional<Pozitie> Joc::sugereazaMutare() const {
     if (jocIncheiat) return std::nullopt;
 
     const auto n = tabla.getMarime();
@@ -243,7 +243,7 @@ void Joc::verificaCapturi(Pozitie p) {
 }
 
 //determinarea castigatorului in functie de scor si komi
-[[maybe_unused]]std::string Joc::determinaCastigator() const {
+std::string Joc::determinaCastigator() const {
     const auto scorNegru = static_cast<float>(capturateNegru);
     const auto scorAlb = static_cast<float>(capturateAlb) + komi;
 
