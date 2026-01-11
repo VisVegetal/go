@@ -48,6 +48,10 @@ public:
     //configurarea partidei initiale
     Joc(Dimensiuni dim, Jucator* n, Jucator* a);
     ~Joc();
+    [[maybe_unused]][[nodiscard]] Culoare getTurnActual() const { return turn; }
+    [[maybe_unused]][[nodiscard]] const Tabla& getTabla() const { return tabla; }
+    [[maybe_unused]][[nodiscard]] int getCapturateNegru() const { return capturateNegru; }
+    [[maybe_unused]][[nodiscard]] int getCapturateAlb() const { return capturateAlb; }
 
     // Aplicarea mutarilor si verificarea starii jocului
     [[maybe_unused]]void aplicaMutare(const Mutare& m);
