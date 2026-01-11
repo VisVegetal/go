@@ -2,9 +2,15 @@
 #define TABLA_HPP
 
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include "Culoare.hpp"
 #include "Pozitie.hpp"
+
+#ifndef CH_CI_RUN
+    #include <SFML/Graphics.hpp>
+#else
+    // Pe CI, unde nu avem SFML Graphics, declaram doar ca exista clasa RenderWindow
+    namespace sf { class RenderWindow; }
+#endif
 
 class Tabla {
 private:
