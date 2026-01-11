@@ -4,6 +4,7 @@
 Tabla::Tabla(Dimensiuni d) : marime(static_cast<unsigned int>(d)) {
     grila.resize(marime, std::vector<Culoare>(marime, Culoare::Gol));
 }
+
 //randare grafica
 void Tabla::draw(sf::RenderWindow& window) const {
 #ifndef CH_CI_RUN
@@ -20,7 +21,6 @@ void Tabla::draw(sf::RenderWindow& window) const {
         };
         window.draw(hLine, 2, sf::Lines);
 
-        // Linii verticale cu culoare specificată
         sf::Vertex vLine[] = {
             sf::Vertex(sf::Vector2f(offset + static_cast<float>(i) * cellSize, offset), culoareGrid),
             sf::Vertex(sf::Vector2f(offset + static_cast<float>(i) * cellSize, offset + static_cast<float>(marime - 1) * cellSize), culoareGrid)
@@ -39,14 +39,13 @@ void Tabla::draw(sf::RenderWindow& window) const {
                 piesa.setOutlineThickness(1.5f);
                 piesa.setOutlineColor(sf::Color(100, 100, 100));
                 window.draw(piesa);
-#else
-    (void)window;
-#endif
             }
         }
     }
+#else
+    (void)window;
+#endif
 }
-
 bool Tabla::esteGol(Pozitie p) const {
     return p.x < marime && p.y < marime && grila[p.x][p.y] == Culoare::Gol;
 }

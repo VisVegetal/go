@@ -17,7 +17,7 @@ public:
     virtual ~Jucator() = default;
     [[nodiscard]] virtual Jucator* clone() const = 0;
     virtual Mutare alegeMutare(const Tabla& t) = 0;
-    [[nodiscard]] std::string getNume() const { return nume; }
+    [[nodiscard]] const std::string& getNume() const { return nume; }
 };
 
 class JucatorUman : public Jucator {

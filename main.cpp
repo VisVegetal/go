@@ -123,7 +123,7 @@ int main() {
         }
 
         Jucator* jucatorCurent = (partida.getTurnActual() == Culoare::Negru) ? j1 : j2;
-        auto* om = dynamic_cast<JucatorUman*>(jucatorCurent);
+        const auto* om = dynamic_cast<JucatorUman*>(jucatorCurent);
 
         if (om != nullptr) {
             msgText.setString("Este randul tau, " + om->getNume() + "!");
@@ -160,7 +160,7 @@ int main() {
 
     //curatare si export
     if (partida.esteIncheiat()) {
-        if (auto* bot = dynamic_cast<JucatorBot*>(j2)) {
+        if (const auto* bot = dynamic_cast<JucatorBot*>(j2)) {
             bot->exportaStatistici();
         }
     }
