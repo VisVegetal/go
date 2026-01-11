@@ -6,7 +6,6 @@ Tabla::Tabla(Dimensiuni d) : marime(static_cast<unsigned int>(d)) {
 }
 //randare grafica
 void Tabla::draw(sf::RenderWindow& window) const {
-#ifndef CH_CI_RUN
     constexpr float cellSize = 40.0f;
     constexpr float offset = 50.0f;
     constexpr float stoneRadius = 18.0f;
@@ -43,9 +42,6 @@ void Tabla::draw(sf::RenderWindow& window) const {
             }
         }
     }
-#else
-    (void)window;
-#endif
 }
 
 bool Tabla::esteGol(Pozitie p) const {
