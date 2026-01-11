@@ -45,13 +45,6 @@ void Tabla::draw(sf::RenderWindow& window) const {
     }
 }
 
-#else
-
-//randare grafica
-void Tabla::draw(sf::RenderWindow& /*window*/) const {
-    // headless / NO_GRAPHICS: nu desenam nimic
-}
-
 #endif
 
 bool Tabla::esteGol(Pozitie p) const {

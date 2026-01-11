@@ -7,8 +7,6 @@
 
 #if !defined(GO_HEADLESS) && !defined(NO_GRAPHICS)
 #include <SFML/Graphics.hpp>
-#else
-namespace sf { class RenderWindow; } // forward declaration
 #endif
 
 class Tabla {
@@ -19,27 +17,17 @@ private:
 public:
     explicit Tabla(Dimensiuni d);
 
-#ifndef GO_HEADLESS
-#ifndef NO_GRAPHICS
+#if !defined(GO_HEADLESS) && !defined(NO_GRAPHICS)
     //tabla de joc si pietrele
-    void draw(sf::RenderWindow& window) const;
-#else
-    void draw(sf::RenderWindow& window) const;
-#endif
-#else
     void draw(sf::RenderWindow& window) const;
 #endif
 
     [[nodiscard]] bool esteGol(Pozitie p) const;
-
     [[nodiscard]] Culoare getPozitieCuloare(Pozitie p) const;
-
     [[nodiscard]] unsigned int getMarime() const;
-
     [[nodiscard]] const std::vector<std::vector<Culoare>>& getGrila() const;
 
     void Plaseazapiatra(Pozitie p, Culoare c);
-
     void setGrila(const std::vector<std::vector<Culoare>>& g);
 
     friend std::ostream& operator<<(std::ostream& os, const Tabla& t);
