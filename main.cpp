@@ -8,14 +8,10 @@
 
 int main() {
     //initializare jucator uman
-    std::string numeJucator;
-    std::cout << "Introdu numele tau: ";
-    if (!(std::getline(std::cin, numeJucator)) || numeJucator.empty()) {
-        numeJucator = "Jucator1";
-    }
+    std::string numeJucator = "JucatorUman";
     //initializare fereastra sfml
     //rezolutie + titlu fereastra
-    sf::RenderWindow window(sf::VideoMode(1000, 750), "Go Game - OOP Project");
+    sf::RenderWindow window(sf::VideoMode(1000, 750), "Go - Proiect POO");
     window.setFramerateLimit(60);
 
     //fonturi externe
