@@ -90,7 +90,7 @@ int main() {
 
 #if defined(CH_CI_RUN) || defined(GO_HEADLESS)
     return ruleazaSmokeTestHeadless();
-#endif
+#else
 
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
@@ -263,4 +263,6 @@ int main() {
     }
 
     return 0;
+
+#endif
 }
