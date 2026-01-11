@@ -4,20 +4,10 @@
 #include <memory> // Adaugat pentru std::unique_ptr (rezolva erorile de memorie)
 #include "Joc.hpp"
 #include "GoExceptions.hpp"
+#include <SFML/Graphics.hpp>
 
-// Includem SFML doar dacă nu suntem în mediul de testare (CI)
-#ifndef CH_CI_RUN
-    #include <SFML/Graphics.hpp>
-#endif
 
 int main() {
-    // --- LOGICĂ PENTRU GITHUB ACTIONS (Headless Mode) ---
-    // Verificăm dacă rulăm în GitHub Actions pentru a evita erorile de OpenGL
-    #ifdef CH_CI_RUN
-    std::cout << "CI detected: Skipping GUI initialization..." << std::endl;
-    return 0;
-    #endif
-    // ----------------------------------------------------
 
     //initializare jucator uman
     std::string numeJucator = "JucatorUman";
