@@ -50,16 +50,12 @@ public:
     ~Joc();
 
     // Aplicarea mutarilor si verificarea starii jocului
-    void aplicaMutare(const Mutare& m);
+    [[maybe_unused]]void aplicaMutare(const Mutare& m);
 
     //verifica daca jocul s-a terminat
-    [[nodiscard]] bool esteIncheiat() const { return jocIncheiat; }
+    [[maybe_unused]][[nodiscard]] bool esteIncheiat() const { return jocIncheiat; }
     void terminaJoc() { jocIncheiat = true; }//oprirea fortata a jocului
 
-    [[nodiscard]] int getCapturateNegru() const { return capturateNegru; }
-    [[nodiscard]] int getCapturateAlb() const { return capturateAlb; }
-    [[nodiscard]] const Tabla& getTabla() const { return tabla; } // returneaza o referinta constanta catre tabla pentru randare eficienta
-    [[nodiscard]] Culoare getTurnActual() const { return turn; }
     [[nodiscard]] std::string determinaCastigator() const; //scor final (puncte+komi)
 
     void verificaCapturi(Pozitie p);//verifica daca s-a efectuat o captura prin inconjurarea unei piese
@@ -67,8 +63,8 @@ public:
     // undo/redo
     [[nodiscard]] bool poateUndo() const { return istoricIndex > 0; }
     [[nodiscard]] bool poateRedo() const { return istoricIndex + 1 < istoric.size(); }
-    void undo();
-    void redo();
+    [[maybe_unused]]void undo();
+    [[maybe_unused]]void redo();
 
     // hint mutare
     [[nodiscard]] std::optional<Pozitie> sugereazaMutare() const;
