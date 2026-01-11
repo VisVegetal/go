@@ -17,9 +17,17 @@ static int ruleazaSmokeTestHeadless() {
 
     Joc partida(Dimensiuni::D9x9, j1.get(), j2.get());
 
-    // folosim functiile ca sa nu pice cppcheck
-    partida.determinaCastigator();
-    partida.sugereazaMutare();
+    auto castigator = partida.determinaCastigator();
+    auto sugestie   = partida.sugereazaMutare();
+
+    if (!castigator.empty()) {
+        std::cout << castigator << "\n";
+    }
+
+    if (sugestie.has_value()) {
+        std::cout << sugestie->x << "," << sugestie->y << "\n";
+    }
+
 
     return 0;
 }
