@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(DESTINATION_DIR ".")
+
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
@@ -44,7 +46,7 @@ set(SFML_BUILD_AUDIO FALSE CACHE BOOL "" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "" FORCE)
 
 # Graphics & Window modules
-if(WIN32 OR APPLE)
+if(WIN32 OR APPLE OR UNIX)
     set(SFML_BUILD_GRAPHICS TRUE CACHE BOOL "" FORCE)
     set(SFML_BUILD_WINDOW TRUE CACHE BOOL "" FORCE)
 else()
