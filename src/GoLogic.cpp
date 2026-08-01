@@ -229,8 +229,7 @@ std::pair<int, int> calculeazaTeritoriu(const Tabla& t) {
 
                 const auto cul = t.getPozitieCuloare(cur);
                 if (cul == Culoare::Gol) {
-                    if (regiune.count(cur) == 0) {
-                        regiune.insert(cur);
+                    if (regiune.insert(cur).second) {
                         for (int k = 0; k < 4; ++k) {
                             const auto nx = static_cast<unsigned int>(static_cast<int>(cur.x) + dx[k]);
                             const auto ny = static_cast<unsigned int>(static_cast<int>(cur.y) + dy[k]);

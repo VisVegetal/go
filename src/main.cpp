@@ -25,9 +25,9 @@ static int ruleazaSmokeTestHeadless() {
     Joc partida(Dimensiuni::D9x9, *botNegru, *botAlb);
 
     for (int i = 0; i < 60 && !partida.esteIncheiat(); ++i) {
-        auto& curent = (partida.getTurnActual() == Culoare::Negru)
-                           ? botNegru
-                           : botAlb;
+        const auto& curent = (partida.getTurnActual() == Culoare::Negru)
+                                 ? botNegru
+                                 : botAlb;
 
         const Mutare mutare = curent->alegeMutare(partida);
         if (!partida.esteMutareValida(mutare)) {
@@ -42,7 +42,7 @@ static int ruleazaSmokeTestHeadless() {
 }
 #endif
 
-#ifndef GO_HEADLESS
+#if !defined(GO_HEADLESS) && !defined(CH_CI_RUN)
 // Configuratia aleasa in meniul de start.
 struct Configuratie {
     Dimensiuni dim;

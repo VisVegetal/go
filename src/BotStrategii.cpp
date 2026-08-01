@@ -99,7 +99,7 @@ void ordoneazaCandidatii(std::vector<GoLogic::MutareCandidat>& candidati, const 
     }
 }
 
-int minimax(Nod& nod, unsigned int adancime, int alpha, int beta, Culoare c, Culoare mine) {
+int minimax(const Nod& nod, unsigned int adancime, int alpha, int beta, Culoare c, Culoare mine) {
     auto candidati = GoLogic::enumeraCandidati(nod.tabla, c, nod.koSet);
 
     if (adancime == 0 || candidati.empty()) {
