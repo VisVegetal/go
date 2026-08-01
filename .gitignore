@@ -1,0 +1,157 @@
+# ============================================================
+#  Go (C++ / SFML / CMake) — .gitignore
+#  Nimic generat sau specific mediilor de dezvoltare nu se
+#  urca pe GitHub. Toate aceste fisiere se regenereaza.
+# ============================================================
+
+# ---------------- Directorare de build ----------------
+build/
+build-*/
+cmake-build-*/
+out/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ipch/
+.vs/
+
+# ---------------- CMake ----------------
+CMakeCache.txt
+CMakeCache.txt.*
+CMakeFiles/
+CMakeScripts/
+CMakeTmp/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+compile_commands.json
+_cmake_*
+_deps/
+*-prefix/
+CMakeLists.txt.user
+*.cmake.stamp
+
+# ---------------- Obiecte, biblioteci, binare ----------------
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.dll.a
+*.exe
+*.out
+*.app
+*.pdb
+*.ilk
+*.gch
+*.pch
+*.slo
+*.lo
+*.mod
+*.smod
+*.lai
+*.la
+*.gcno
+*.gcda
+*.gcov
+*.d
+*.dep
+
+# ---------------- Visual Studio ----------------
+*.sln
+*.slnx
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.sdf
+*.opendb
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+*.aps
+*.tlog
+*.idb
+*.ipdb
+*.iobj
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.bsc
+*.tlb
+*.tlh
+*.tli
+*.tmp
+*.log
+*.metaproj
+*.metaproj.tmp
+UpgradeLog*.htm
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.pfx
+*.publishsettings
+PublishScripts/
+ipch/
+*.vspscc
+*.vssscc
+*.opensdf
+
+# ---------------- CLion / JetBrains ----------------
+.idea/
+.cache/
+.clion*
+*.iml
+*.ipr
+*.iws
+cmake-build-*/
+
+# ---------------- VS Code ----------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+
+# ---------------- macOS ----------------
+.DS_Store
+*.DS_Store
+xcuserdata/
+xcov_data/
+DerivedData/
+*.xccheckout
+*.xcscmblueprint
+
+# ---------------- Editori / diverse ----------------
+*~
+*.swp
+*.swo
+#*#
+.#*
+*.bak
+*.orig
+*.rej
+Session.vim
+Sessionx.vim
+.netrwhist
+tags
+.idea-workspace.xml
+
+# ---------------- Rulare locala (output-uri) ----------------
+input.txt
+output.txt

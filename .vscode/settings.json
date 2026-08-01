@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "build/": true,
+        "install_dir/": true,
+        "**/*.obj": true
+    },
+    "search.exclude": {
+        "build/": true
+    }
+}

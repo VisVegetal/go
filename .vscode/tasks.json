@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", ".",
+                "-B", "build"
+            ],
+            "problemMatcher": ["$msCompile"],
+            "group": "build"
+        },
+        {
+            "label": "CMake: Build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "build",
+                "--config", "Debug"
+            ],
+            "problemMatcher": ["$msCompile"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Go: Ruleaza jocul (GUI)",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/Debug/oop.exe",
+            "options": {
+                "cwd": "${workspaceFolder}/build/Debug"
+            },
+            "dependsOn": "CMake: Build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Go: Build & Run",
+            "dependsOn": ["CMake: Build", "Go: Ruleaza jocul (GUI)"],
+            "dependsOrder": "sequence",
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
